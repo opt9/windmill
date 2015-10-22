@@ -21,6 +21,7 @@ class Enroller
       params.merge!(assigned_config_id: @cg.default_config,
         node_key: SecureRandom.uuid,
         config_count: 0,
+        group_label: group_label,
         identifier: identifier)
       logdebug "valid enroll_secret. Creating new endpoint - #{params}"
       @cg.endpoints.create params
