@@ -7,6 +7,10 @@
     "postdeploy": "bundle exec rake db:setup"
   },
   "env": {
+    "AUTHORIZEDUSERS": {
+      "description": "A comma seperated (no spaces) list of email addresses to allow access to",
+      "required": true
+    },
     "NODE_ENROLL_SECRET": {
       "description": "A shared secret key for validating osquery endpoints.",
       "generator": "secret"
