@@ -122,13 +122,13 @@ the login with GitHub option  will be visible on the login page.
 
 Populate an environment variable named `HEROKU_KEY` and a variable named
 `HEROKU_SECRET`. If *both*  of these variables are populated with a value, then
-the login with GitHub option  will be visible on the login page.
+the login with Heroku option  will be visible on the login page.
 
 ### Authenticate with Google
 
 Populate an environment variable named `GOOGLE_ID` and a variable named
 `GOOGLE_SECRET`. If *both*  of these variables are populated with a value, then
-the login with Google option  will be visible on the login page.
+the login with Google option  will be visible on the login page. You will also need to authorize the callback URL `https://yourserver.yourdomain.com/auth/google/callback` for your credentials. 
 
 Special note, logging in with Google may require an extra step to avoid protocol
 mismatch if you use a service that runs your app unencrypted but uses a service
