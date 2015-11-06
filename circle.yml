@@ -1,0 +1,3 @@
+test:
+  pre:
+    - RACK_ENV=test bundle exec rake db:migrate
