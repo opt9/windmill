@@ -54,5 +54,4 @@ describe 'Endpoint instance methods' do
     @endpoint.assigned_config_id = nil
     expect(@endpoint.valid?).to be_falsey
   end
-
 end

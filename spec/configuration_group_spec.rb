@@ -91,5 +91,4 @@ describe "osquery configuration groups" do
   it "should throw an error if you try to delete a configuration group that has endpoints" do
     expect {@cg.destroy}.to raise_error(RuntimeError)
   end
-
 end

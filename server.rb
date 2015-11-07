@@ -153,7 +153,6 @@ namespace '/api' do
     logdebug "Received endpoint: #{client.inspect}"
     client.get_config user_agent: request.user_agent
   end
-
 end
 
 namespace '/configuration-groups' do
@@ -249,7 +248,6 @@ namespace '/configuration-groups' do
           redirect "/configuration-groups/#{params[:cg_id]}"
       end
     end
-
 
     post '/assign' do
       @cg = GuaranteedConfigurationGroup.find(params[:cg_id])

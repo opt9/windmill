@@ -6,9 +6,7 @@ require 'rack/test'
 require 'database_cleaner'
 require_relative '../server.rb'
 
-
 RSpec.configure do |config|
-
   config.before(:each) do
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.start
@@ -17,5 +15,4 @@ RSpec.configure do |config|
   config.after(:each) do
     DatabaseCleaner.clean
   end
-
 end
