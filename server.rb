@@ -130,16 +130,16 @@ namespace '/api' do
     # CRUD CONFIG
 
     post '/new' do
-      # Create a new configureation
+      # TODO Create: Configuration
     end
 
-    # Read All
     get do
+      # Read: All Configurations
       Configuration.all.to_json
     end
 
-    # Read One
     get '/:configuration_id' do
+      # Read: One Configuration
       begin
         Configuration.find(params['configuration_id']).to_json
       rescue
@@ -148,12 +148,12 @@ namespace '/api' do
     end
 
     patch '/:configuration_id' do
-      # Update
+      # Update: Configuration
       {'status': 'Configuration modification via the Windmill API is not supported.'}.to_json
     end
 
     delete '/:configuration_id' do
-      # Delete: Gotta think about this one
+      # Delete: Configuration
 
       begin
         @e = Configruation.find(params['configuration_id'])
@@ -166,10 +166,9 @@ namespace '/api' do
   end
 
   namespace '/configuration_groups' do
-    # CRUD CONFIG_GROUPS
 
     post '/new' do
-      # Create New Configuration Group
+      # Create: Configuration Group
       begin
         json_data = JSON.parse(request.body.read)
         @cg = ConfigurationGroup.create(name: json_data['name'])
@@ -180,12 +179,12 @@ namespace '/api' do
     end
 
     get do
-      # Read All Configuration Groups
+      # Read: All Configuration Groups
       ConfigurationGroup.all.to_json
     end
 
     get '/:configuration_group_id' do
-      # Read One Configuration Group
+      # Read: One Configuration Group
       begin
         @e = ConfigruationGroup.find(params['configuration_group_id'])
         @e.destroy
@@ -196,12 +195,12 @@ namespace '/api' do
     end
 
     patch '/:configuration_group_id' do
-      # Update a Configuration Group
+      # Update: Configuration Group
       {'status': 'configuration group modification via the Windmill API is not supported'}.to_json
     end
 
     delete '/:configuration_group_id' do
-      # Delete a Configuration Group
+      # Delete: Configuration Group
       begin
         @e = ConfigurationGroup.find(params['configuration_group_id'])
         @e.destroy
@@ -214,17 +213,21 @@ namespace '/api' do
 
   namespace '/endpoints' do
     post do
-      # Create: Not necessary.
+      # Create: Endpoint. Not implimented deliberately. Should be registered by osquery.
       {'status': 'endpoint creation via the Windmill API is not supported'}.to_json
     end
 
     get do
-      # Read All Endpoints - Known Bug: Fails with no endpoints in the DB
-      Endpoint.all.to_json
+      # Read: All Endpoints
+      begin
+        Endpoint.all.to_json
+      rescue
+        {'status': 'no endpoints found'}.to_json
+      end
     end
 
     get '/:endpoint_id' do
-      # Read One
+      # Read: One Endpoint
       begin
         Endpoint.find(params['endpoint_id']).to_json
       rescue
@@ -232,13 +235,13 @@ namespace '/api' do
       end
     end
 
-    post '/:endpoint' do
-      # Update Endpoint: Unsupported and not planning to be.
+    patch '/:endpoint' do
+      # Update: Not implimented deliberately. Should be updated by osquery.
       {'status': 'endpoint updating via the Windmill API is not supported'}.to_json
     end
 
     delete '/:endpoint_id' do
-      # Delete: Gotta think about this one.
+      # Delete: One Endpoint
       begin
         @e = Endpoint.find(params['endpoint_id'])
         @e.destroy
