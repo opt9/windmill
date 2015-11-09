@@ -149,14 +149,14 @@ namespace '/api' do
 
     patch '/:configuration_id' do
       # Update
-      {'Error': 'Configuration modification via the Windmill API is not supported.'}.to_json
+      {'status': 'Configuration modification via the Windmill API is not supported.'}.to_json
     end
 
     delete '/:configuration_id' do
       # Delete: Gotta think about this one
 
       begin
-        @e = Endpoint.find(params['configuration_id'])
+        @e = Configruation.find(params['configuration_id'])
         @e.destroy
         {'status': 'deleted'}.to_json
       rescue
@@ -169,25 +169,23 @@ namespace '/api' do
     # CRUD CONFIG_GROUPS
 
     post '/new' do
-      # WIP: Create New Configuration Group
-
+      # Create New Configuration Group
       begin
         json_data = JSON.parse(request.body.read)
-        puts json_data
-        params.merge!(json_data)
+        @cg = ConfigurationGroup.create(name: json_data['name'])
+        {'status': 'created', 'configuration_group': @cg}.to_json
       rescue
-
-      @cg = ConfigurationGroup.create(name: params['name'])
-      {'status': 'created', 'configuration_group': @cg}.to_json
+        {'status': 'configuration group creation failed'}.to_json
+      end
     end
 
     get do
-      # Read All
+      # Read All Configuration Groups
       ConfigurationGroup.all.to_json
     end
 
     get '/:configuration_group_id' do
-      # Read One
+      # Read One Configuration Group
       begin
         @e = ConfigruationGroup.find(params['configuration_group_id'])
         @e.destroy
@@ -196,12 +194,28 @@ namespace '/api' do
         {'status': 'configuration group not found'}.to_json
       end
     end
+
+    patch '/:configuration_group_id' do
+      # Update a Configuration Group
+      {'status': 'configuration group modification via the Windmill API is not supported'}.to_json
+    end
+
+    delete '/:configuration_group_id' do
+      # Delete a Configuration Group
+      begin
+        @e = ConfigurationGroup.find(params['configuration_group_id'])
+        @e.destroy
+        {'status': 'deleted'}.to_json
+      rescue
+        {'status': 'endpoint not found'}.to_json
+      end
+    end
   end
 
   namespace '/endpoints' do
     post do
       # Create: Not necessary.
-      {'Error': 'endpoint creation via the Windmill API is not supported'}.to_json
+      {'status': 'endpoint creation via the Windmill API is not supported'}.to_json
     end
 
     get do
