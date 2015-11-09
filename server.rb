@@ -171,7 +171,13 @@ namespace '/api' do
     post '/new' do
       # WIP: Create New Configuration Group
 
-      @cg = ConfigurationGroup.create(name: params[:name])
+      begin
+        json_data = JSON.parse(request.body.read)
+        puts json_data
+        params.merge!(json_data)
+      rescue
+
+      @cg = ConfigurationGroup.create(name: params['name'])
       {'status': 'created', 'configuration_group': @cg}.to_json
     end
 
