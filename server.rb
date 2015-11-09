@@ -131,6 +131,9 @@ namespace '/api' do
 
     post '/new' do
       # TODO Create: Configuration
+      json_data = JSON.parse(request.body.read)
+      @c = Configuration.create(name: json_data['name'], config_json: json_data['configuration'], version: json_data['version'])
+      {'status': 'created', 'configuration': @c}.to_json
     end
 
     get do
