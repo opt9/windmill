@@ -132,7 +132,8 @@ namespace '/api' do
     post '/new' do
       # TODO Create: Configuration
       json_data = JSON.parse(request.body.read)
-      @c = Configuration.create(name: json_data['name'], config_json: json_data['configuration'], version: json_data['version'])
+      @c = Configuration.create(name: json_data['name'], config_json: json_data['configuration'], version: json_data['version'], notes: json_data['notes'])
+      @c.save
       {'status': 'created', 'configuration': @c}.to_json
     end
 
@@ -159,8 +160,8 @@ namespace '/api' do
       # Delete: Configuration
 
       begin
-        @e = Configruation.find(params['configuration_id'])
-        @e.destroy
+        @c = Configruation.find(params['configuration_id'])
+        @c.destroy
         {'status': 'deleted'}.to_json
       rescue
         {'status': 'configuration not found'}.to_json
