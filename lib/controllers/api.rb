@@ -7,6 +7,7 @@ namespace '/api' do
     # CRUD CONFIG
 
     post '/new' do
+      content_type :json
       # Create: Configuration
       json_data = JSON.parse(request.body.read)
 
@@ -26,11 +27,13 @@ namespace '/api' do
     end
 
     get do
+      content_type :json
       # Read: All Configurations
       Configuration.all.to_json
     end
 
     get '/:configuration_id' do
+      content_type :json
       # Read: One Configuration
       begin
         Configuration.find(params['configuration_id']).to_json
@@ -40,11 +43,13 @@ namespace '/api' do
     end
 
     patch '/:configuration_id' do
+      content_type :json
       # Update: Configuration
       {'status': 'Configuration modification via the Windmill API is not supported.'}.to_json
     end
 
     delete '/:configuration_id' do
+      content_type :json
       # Delete: Configuration
 
       begin
@@ -60,6 +65,7 @@ namespace '/api' do
   namespace '/configuration_groups' do
 
     post '/new' do
+      content_type :json
       # Create: Configuration Group
       begin
         json_data = JSON.parse(request.body.read)
@@ -71,11 +77,13 @@ namespace '/api' do
     end
 
     get do
+      content_type :json
       # Read: All Configuration Groups
       ConfigurationGroup.all.to_json
     end
 
     get '/:configuration_group_id' do
+      content_type :json
       # Read: One Configuration Group
       begin
         @e = ConfigruationGroup.find(params['configuration_group_id'])
@@ -87,11 +95,13 @@ namespace '/api' do
     end
 
     patch '/:configuration_group_id' do
+      content_type :json
       # Update: Configuration Group
       {'status': 'configuration group modification via the Windmill API is not supported'}.to_json
     end
 
     delete '/:configuration_group_id' do
+      content_type :json
       # Delete: Configuration Group
       begin
         @e = ConfigurationGroup.find(params['configuration_group_id'])
@@ -103,6 +113,7 @@ namespace '/api' do
     end
 
     post '/:cg_id/configuration/new' do
+      content_type :json
       # Create: Configuration
 
       json_data = JSON.parse(request.body.read)
@@ -124,11 +135,13 @@ namespace '/api' do
 
   namespace '/endpoints' do
     post do
+      content_type :json
       # Create: Endpoint. Not implimented deliberately. Should be registered by osquery.
       {'status': 'endpoint creation via the Windmill API is not supported'}.to_json
     end
 
     get do
+      content_type :json
       # Read: All Endpoints
       begin
         Endpoint.all.to_json
@@ -138,6 +151,7 @@ namespace '/api' do
     end
 
     get '/:endpoint_id' do
+      content_type :json
       # Read: One Endpoint
       begin
         Endpoint.find(params['endpoint_id']).to_json
@@ -147,11 +161,13 @@ namespace '/api' do
     end
 
     patch '/:endpoint' do
+      content_type :json
       # Update: Not implimented deliberately. Should be updated by osquery.
       {'status': 'endpoint updating via the Windmill API is not supported'}.to_json
     end
 
     delete '/:endpoint_id' do
+      content_type :json
       # Delete: One Endpoint
       begin
         @e = Endpoint.find(params['endpoint_id'])
