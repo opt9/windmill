@@ -132,9 +132,20 @@ namespace '/api' do
     post '/new' do
       # TODO Create: Configuration
       json_data = JSON.parse(request.body.read)
-      @c = Configuration.create(name: json_data['name'], config_json: json_data['configuration'], version: json_data['version'], notes: json_data['notes'])
-      @c.save
-      {'status': 'created', 'configuration': @c}.to_json
+
+      if json_data['cg_id']
+
+        @cg = ConfigurationGroup.find(json_data['cg_id'])
+        @c = @cg.configurations.build(name: json_data['name'], config_json: json_data['configuration'], version: json_data['version'], notes: json_data['notes'])
+        @c.save
+        if @c.save
+          {'status': 'created', 'configuration': @c}.to_json
+        else
+          {'status': 'configuration creation failed', 'error': @c.errors}.to_json
+        end
+      else
+        {'status': 'no configuration group specified'}.to_json
+      end
     end
 
     get do
@@ -211,6 +222,23 @@ namespace '/api' do
         {'status': 'deleted'}.to_json
       rescue
         {'status': 'endpoint not found'}.to_json
+      end
+    end
+
+    post '/:cg_id/configuration/new' do
+      json_data = JSON.parse(request.body.read)
+
+      if params['cg_id']
+        @cg = ConfigurationGroup.find(params['cg_id'])
+        @c = @cg.configurations.build(name: json_data['name'], config_json: json_data['configuration'], version: json_data['version'], notes: json_data['notes'])
+        @c.save
+        if @c.save
+          return {'status': 'created', 'configuration': @c}.to_json
+        else
+          return {'status': 'configuration creation failed', 'error': @c.errors}.to_json
+        end
+      else
+        return {'status': 'no configuration group specified'}.to_json
       end
     end
   end
