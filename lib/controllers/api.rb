@@ -64,16 +64,18 @@ namespace '/api' do
 
   namespace '/configuration_groups' do
 
-    post '/new' do
-      content_type :json
+    post do
       # Create: Configuration Group
-      begin
-        json_data = JSON.parse(request.body.read)
-        @cg = ConfigurationGroup.create(name: json_data['name'])
+      content_type :json
+
+      json_data = JSON.parse(request.body.read)
+      @cg = ConfigurationGroup.create(name: json_data['name'])
+      if @cg.save
         {'status': 'created', 'configuration_group': @cg}.to_json
-      rescue
-        {'status': 'configuration group creation failed'}.to_json
+      else
+        {'status': 'configuration group creation failed', error: @cg.errors}.to_json
       end
+
     end
 
     get do

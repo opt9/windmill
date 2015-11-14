@@ -17,6 +17,8 @@ require_relative 'lib/controllers/auth'
 require_relative 'lib/controllers/configuration_groups'
 require_relative 'lib/controllers/api'
 
+disable :show_exceptions
+
 NODE_ENROLL_SECRET = ENV['NODE_ENROLL_SECRET'] || "valid_test"
 
 use Rack::Session::EncryptedCookie, expire_after: 86_400, secret: ENV['COOKIE_SECRET'] || SecureRandom.hex(64)

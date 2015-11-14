@@ -126,7 +126,6 @@ describe 'The osquery TLS api' do
     expect(last_response.body).to match(@endpoint.get_config)
   end
 
-
   it "rejects a request for configuration from a node with an invalid node secret" do
     post '/api/config', node_key: "invalid_test"
     expect(last_response).to be_ok
@@ -141,5 +140,26 @@ describe 'The osquery TLS api' do
     post '/api/config', {node_key: @endpoint.node_key}, {'HTTP_USER_AGENT' => "version2"}
     @endpoint.reload
     expect(@endpoint.last_version).to eq("version2")
+  end
+
+  it "allows you to create a new configuration group" do
+    pre_create_count = ConfigurationGroup.count
+    post '/api/configuration_groups', {name: "api-test"}.to_json
+    expect(last_response).to be_ok
+    expect(ConfigurationGroup.count).to eq(pre_create_count + 1)
+    expect(ConfigurationGroup.last.name).to eq("api-test")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq("created")
+    expect(response['configuration_group']['name']).to eq("api-test")
+  end
+
+  it "provides a reasonable error message when it fails to create a configuration group" do
+    pre_create_count = ConfigurationGroup.count
+    post '/api/configuration_groups', {name: ""}.to_json # no name provided. Invalid object
+    expect(last_response).to be_ok
+    expect(ConfigurationGroup.count).to eq(pre_create_count)
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq("configuration group creation failed")
+    expect(response.keys).to include("error")
   end
 end
