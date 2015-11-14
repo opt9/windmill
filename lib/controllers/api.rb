@@ -181,34 +181,32 @@ namespace '/api' do
     end
   end
 
-  namespace '/enroll' do
 
-    post do
-      # This next line is necessary because osqueryd does not send the
-      # enroll_secret as a POST param.
-      begin
-        json_data = JSON.parse(request.body.read)
-        params.merge!(json_data)
-      rescue
-      end
-
-      @endpoint = Enroller.enroll params['enroll_secret'],
-        last_version: request.user_agent,
-        last_ip: request.ip
-      @endpoint.node_secret
+  post '/enroll' do
+    # This next line is necessary because osqueryd does not send the
+    # enroll_secret as a POST param.
+    begin
+      json_data = JSON.parse(request.body.read)
+      params.merge!(json_data)
+    rescue
     end
 
-    post '/config' do
-      # This next line is necessary because osqueryd does not send the
-      # enroll_secret as a POST param.
-      begin
-        params.merge!(JSON.parse(request.body.read))
-      rescue
-      end
-      logdebug "value in node_key is #{params['node_key']}"
-      client = GuaranteedEndpoint.find_by node_key: params['node_key']
-      logdebug "Received endpoint: #{client.inspect}"
-      client.get_config user_agent: request.user_agent
+    @endpoint = Enroller.enroll params['enroll_secret'],
+      last_version: request.user_agent,
+      last_ip: request.ip
+    @endpoint.node_secret
+  end
+
+  post '/config' do
+    # This next line is necessary because osqueryd does not send the
+    # enroll_secret as a POST param.
+    begin
+      params.merge!(JSON.parse(request.body.read))
+    rescue
     end
+    logdebug "value in node_key is #{params['node_key']}"
+    client = GuaranteedEndpoint.find_by node_key: params['node_key']
+    logdebug "Received endpoint: #{client.inspect}"
+    client.get_config user_agent: request.user_agent
   end
 end
