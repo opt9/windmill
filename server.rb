@@ -130,7 +130,7 @@ namespace '/api' do
     # CRUD CONFIG
 
     post '/new' do
-      # TODO Create: Configuration
+      # Create: Configuration
       json_data = JSON.parse(request.body.read)
 
       if json_data['cg_id']
@@ -226,6 +226,8 @@ namespace '/api' do
     end
 
     post '/:cg_id/configuration/new' do
+      # Create: Configuration
+      
       json_data = JSON.parse(request.body.read)
 
       if params['cg_id']
