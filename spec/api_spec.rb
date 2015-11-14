@@ -153,7 +153,7 @@ describe 'The osquery TLS api' do
     expect(response['configuration_group']['name']).to eq("api-test")
   end
 
-  it "provides a reasonable error message when it fails to create a configuration group" do
+  it "provides a reasonable error message when it fails to create a ConfigurationGroup" do
     pre_create_count = ConfigurationGroup.count
     post '/api/configuration_groups', {name: ""}.to_json # no name provided. Invalid object
     expect(last_response).to be_ok
@@ -161,5 +161,12 @@ describe 'The osquery TLS api' do
     response = JSON.parse(last_response.body)
     expect(response['status']).to eq("configuration group creation failed")
     expect(response.keys).to include("error")
+  end
+
+  it "allows you to get an index of ConfigurationGroups" do
+    get '/api/configuration_groups'
+    expect(last_response).to be_ok
+    response = JSON.parse(last_response.body)
+    expect(response.length).to eq(ConfigurationGroup.count)
   end
 end

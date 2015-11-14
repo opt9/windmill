@@ -79,8 +79,8 @@ namespace '/api' do
     end
 
     get do
-      content_type :json
       # Read: All Configuration Groups
+      content_type :json
       ConfigurationGroup.all.to_json
     end
 
