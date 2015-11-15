@@ -1,6 +1,37 @@
 namespace '/api' do
   get '/status' do
+    content_type :json
     {"status": "running", "timestamp": Time.now}.to_json
+  end
+
+  post '/enroll' do
+    content_type :json
+    # This next line is necessary because osqueryd does not send the
+    # enroll_secret as a POST param.
+    begin
+      json_data = JSON.parse(request.body.read)
+      params.merge!(json_data)
+    rescue
+    end
+
+    @endpoint = Enroller.enroll params['enroll_secret'],
+      last_version: request.user_agent,
+      last_ip: request.ip
+    @endpoint.node_secret
+  end
+
+  post '/config' do
+        content_type :json
+    # This next line is necessary because osqueryd does not send the
+    # enroll_secret as a POST param.
+    begin
+      params.merge!(JSON.parse(request.body.read))
+    rescue
+    end
+    logdebug "value in node_key is #{params['node_key']}"
+    client = GuaranteedEndpoint.find_by node_key: params['node_key']
+    logdebug "Received endpoint: #{client.inspect}"
+    client.get_config user_agent: request.user_agent
   end
 
   namespace '/configurations' do
@@ -113,8 +144,17 @@ namespace '/api' do
         content_type :json
         {'status': 'configuration group modification via the Windmill API is not supported'}.to_json
       end
-    end
 
+      namespace '/configurations' do
+        get do
+          content_type :json
+          @cg = ConfigurationGroup.find(params[:cg_id])
+          @cg.configurations.to_json
+        end
+      end # end namespace /configuration_groups/:cg_id/configurations
+    end # end namespace /configuration_groups/:cg_id
+
+    #TODO: Take this code and move it into the namespace above.
     post '/:cg_id/configuration/new' do
       content_type :json
       # Create: Configuration
@@ -134,7 +174,7 @@ namespace '/api' do
         return {'status': 'no configuration group specified'}.to_json
       end
     end
-  end
+  end # end namespace /configuration_groups
 
   namespace '/endpoints' do
     post do
@@ -183,31 +223,5 @@ namespace '/api' do
   end
 
 
-  post '/enroll' do
-    # This next line is necessary because osqueryd does not send the
-    # enroll_secret as a POST param.
-    begin
-      json_data = JSON.parse(request.body.read)
-      params.merge!(json_data)
-    rescue
-    end
 
-    @endpoint = Enroller.enroll params['enroll_secret'],
-      last_version: request.user_agent,
-      last_ip: request.ip
-    @endpoint.node_secret
-  end
-
-  post '/config' do
-    # This next line is necessary because osqueryd does not send the
-    # enroll_secret as a POST param.
-    begin
-      params.merge!(JSON.parse(request.body.read))
-    rescue
-    end
-    logdebug "value in node_key is #{params['node_key']}"
-    client = GuaranteedEndpoint.find_by node_key: params['node_key']
-    logdebug "Received endpoint: #{client.inspect}"
-    client.get_config user_agent: request.user_agent
-  end
-end
+end # end /api namespace

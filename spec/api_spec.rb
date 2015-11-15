@@ -20,6 +20,7 @@ describe 'The osquery TLS api' do
   it "sets a new client's config_count to zero" do
     post '/api/enroll', {enroll_secret: "valid_test"}
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     client = Endpoint.find_by node_key: json['node_key']
     expect(client.config_count).to eq(0)
@@ -28,6 +29,7 @@ describe 'The osquery TLS api' do
   it "sets a new clients last_config_time to nil" do
     post '/api/enroll', {enroll_secret: "valid_test"}
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     client = Endpoint.find_by node_key: json['node_key']
     expect(client.last_config_time).to eq(nil)
@@ -37,6 +39,8 @@ describe 'The osquery TLS api' do
     client = Endpoint.last
     config_count = client.config_count
     post '/api/config', node_key: client.node_key
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     client.reload
     expect(client.config_count).to eq(config_count + 1)
   end
@@ -45,6 +49,8 @@ describe 'The osquery TLS api' do
     @client = Endpoint.last
     config_time = @client.last_config_time || Time.now
     post '/api/config', node_key: @client.node_key
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     @client.reload
     expect(@client.last_config_time).to be > config_time
   end
@@ -52,6 +58,7 @@ describe 'The osquery TLS api' do
   it "returns a status" do
     get '/api/status'
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     expect(json["status"]).to eq("running")
     expect(json).to have_key("timestamp")
@@ -61,6 +68,7 @@ describe 'The osquery TLS api' do
     pre_enroll_endpoint_count = Endpoint.count
     post '/api/enroll', {enroll_secret: "valid_test"}
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     expect(json).to have_key("node_key")
     valid_node_key = json["node_key"]
@@ -70,6 +78,7 @@ describe 'The osquery TLS api' do
   it "rejects a node with an invalid enroll secret" do
     post '/api/enroll', enroll_secret: "invalid_test"
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     expect(json).to have_key("node_invalid")
     expect(json["node_invalid"]).to eq(true)
@@ -78,6 +87,7 @@ describe 'The osquery TLS api' do
   it "records ConfigurationGroup and identifier when a node enrolls with a valid enroll secret" do
     post '/api/enroll', {enroll_secret: "hostname:default:valid_test"}
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     expect(json).to have_key("node_key")
     valid_node_key = json["node_key"]
@@ -89,6 +99,7 @@ describe 'The osquery TLS api' do
   it "records just the ConfigurationGroup when a node enrolls with a valid enroll secret" do
     post '/api/enroll', {enroll_secret: "default:valid_test"}
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     expect(json).to have_key("node_key")
     valid_node_key = json["node_key"]
@@ -100,6 +111,7 @@ describe 'The osquery TLS api' do
   it "enrolls an endpoint into the default ConfigurationGroup when an invalid group name is supplied" do
     post '/api/enroll', {enroll_secret: "hostname:invalid:valid_test"}
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     expect(json).to have_key("node_key")
     valid_node_key = json["node_key"]
@@ -111,6 +123,7 @@ describe 'The osquery TLS api' do
   it "enrolls an endpoint into the default ConfigurationGroup when a valid group name is supplied but the group has no configurations" do
     post '/api/enroll', {enroll_secret: "empty-test:empty:valid_test"}
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     expect(json).to have_key("node_key")
     valid_node_key = json["node_key"]
@@ -123,12 +136,14 @@ describe 'The osquery TLS api' do
     @endpoint = Endpoint.last
     post '/api/config', node_key: @endpoint.node_key
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     expect(last_response.body).to match(@endpoint.get_config)
   end
 
   it "rejects a request for configuration from a node with an invalid node secret" do
     post '/api/config', node_key: "invalid_test"
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     json = JSON.parse(last_response.body)
     expect(json).to have_key("node_invalid")
     expect(json["node_invalid"]).to eq(true)
@@ -138,6 +153,8 @@ describe 'The osquery TLS api' do
     @endpoint = Endpoint.last
     old_agent = @endpoint.last_version
     post '/api/config', {node_key: @endpoint.node_key}, {'HTTP_USER_AGENT' => "version2"}
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     @endpoint.reload
     expect(@endpoint.last_version).to eq("version2")
   end
@@ -146,6 +163,7 @@ describe 'The osquery TLS api' do
     pre_create_count = ConfigurationGroup.count
     post '/api/configuration_groups', {name: "api-test"}.to_json
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     expect(ConfigurationGroup.count).to eq(pre_create_count + 1)
     expect(ConfigurationGroup.last.name).to eq("api-test")
     response = JSON.parse(last_response.body)
@@ -157,6 +175,7 @@ describe 'The osquery TLS api' do
     pre_create_count = ConfigurationGroup.count
     post '/api/configuration_groups', {name: ""}.to_json # no name provided. Invalid object
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     expect(ConfigurationGroup.count).to eq(pre_create_count)
     response = JSON.parse(last_response.body)
     expect(response['status']).to eq("configuration group creation failed")
@@ -166,6 +185,7 @@ describe 'The osquery TLS api' do
   it "allows you to get an index of ConfigurationGroups" do
     get '/api/configuration_groups'
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     response = JSON.parse(last_response.body)
     expect(response.length).to eq(ConfigurationGroup.count)
   end
@@ -175,6 +195,7 @@ describe 'The osquery TLS api' do
     pre_create_count = ConfigurationGroup.count
     post '/api/configuration_groups', {name: "api-test"}.to_json
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     response = JSON.parse(last_response.body)
     id = response['configuration_group']['id']
     delete "/api/configuration_groups/#{id}"
@@ -189,6 +210,7 @@ describe 'The osquery TLS api' do
 
     delete "/api/configuration_groups/#{@cg.id}"
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     expect(ConfigurationGroup.count).to eq(pre_create_count)
     response = JSON.parse(last_response.body)
     expect(response['status']).to eq('error')
@@ -199,6 +221,7 @@ describe 'The osquery TLS api' do
     @cg = ConfigurationGroup.first
     get "/api/configuration_groups/#{@cg.id}"
     expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
     response = JSON.parse(last_response.body)
 
     expect(response['id']).to eq(@cg.id)
@@ -207,5 +230,15 @@ describe 'The osquery TLS api' do
     expect(response['endpoint_count']).to eq(@cg.endpoints.count)
     expect(response['endpoint_ids']).to include(@cg.endpoints.first.id)
     expect(response['configuration_ids']).to include(@cg.configurations.first.id)
+  end
+
+  it "allows you to get a list of all Configurations belonging to a ConfigurationGroup" do
+    @cg = ConfigurationGroup.first
+    get "/api/configuration_groups/#{@cg.id}/configurations"
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response.length).to eq(@cg.configurations.count)
+
   end
 end
