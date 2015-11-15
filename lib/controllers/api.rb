@@ -169,27 +169,6 @@ namespace '/api' do
         end
       end # end namespace /configuration_groups/:cg_id/configurations
     end # end namespace /configuration_groups/:cg_id
-
-    #TODO: Take this code and move it into the namespace above.
-    post '/:cg_id/configuration/new' do
-      content_type :json
-      # Create: Configuration
-
-
-
-      if params['cg_id']
-        @cg = ConfigurationGroup.find(params['cg_id'])
-        @c = @cg.configurations.build(name: json_data['name'], config_json: json_data['configuration'], version: json_data['version'], notes: json_data['notes'])
-        @c.save
-        if @c.save
-          return {'status': 'created', 'configuration': @c}.to_json
-        else
-          return {'status': 'configuration creation failed', 'error': @c.errors}.to_json
-        end
-      else
-        return {'status': 'no configuration group specified'}.to_json
-      end
-    end
   end # end namespace /configuration_groups
 
   namespace '/endpoints' do
@@ -237,7 +216,5 @@ namespace '/api' do
       end
     end
   end
-
-
 
 end # end /api namespace
