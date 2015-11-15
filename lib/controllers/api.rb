@@ -151,6 +151,22 @@ namespace '/api' do
           @cg = ConfigurationGroup.find(params[:cg_id])
           @cg.configurations.to_json
         end
+
+        post do
+          content_type :json
+          json_data = JSON.parse(request.body.read)
+          @cg = ConfigurationGroup.find(params[:cg_id])
+          @config = @cg.configurations.build(name: json_data['name'],
+            version: json_data['version'],
+            notes: json_data['notes'],
+            config_json: json_data['config_json'])
+
+          if @config.save
+            {status: "created", config: @config}.to_json
+          else
+            {status: "Configuration creation failed.", error: @config.errors}.to_json
+          end
+        end
       end # end namespace /configuration_groups/:cg_id/configurations
     end # end namespace /configuration_groups/:cg_id
 
@@ -159,7 +175,7 @@ namespace '/api' do
       content_type :json
       # Create: Configuration
 
-      json_data = JSON.parse(request.body.read)
+
 
       if params['cg_id']
         @cg = ConfigurationGroup.find(params['cg_id'])

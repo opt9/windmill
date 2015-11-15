@@ -239,6 +239,24 @@ describe 'The osquery TLS api' do
     expect(last_response.content_type).to eq("application/json")
     response = JSON.parse(last_response.body)
     expect(response.length).to eq(@cg.configurations.count)
+  end
 
+  it "allows you to add a Configuration to a ConfigurationGroup" do
+    @cg = ConfigurationGroup.first
+    pre_create_count = @cg.configurations.count
+    post "/api/configuration_groups/#{@cg.id}/configurations", {name: "api-test",
+      version: 1,
+      notes: "this is a test",
+      config_json: {test:"test"}.to_json.to_s}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('created')
+    expect(response.keys).to include("config")
+    expect(response['config']).to include('id')
+    expect(response['config']['name']).to eq("api-test")
+    expect(response['config']['version']).to eq(1)
+    expect(response['config']['config_json']).to eq({test:"test"}.to_json)
+    expect(response['config']['configuration_group_id']).to eq(@cg.id)
   end
 end
