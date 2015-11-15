@@ -181,4 +181,15 @@ describe 'The osquery TLS api' do
     response = JSON.parse(last_response.body)
     expect(response['status']).to eq('deleted')
   end
+
+  it "doesn't allow you to delete a ConfigurationGroup that has endpoints" do
+    @cg = ConfigurationGroup.first
+    pre_create_count = ConfigurationGroup.count
+
+    delete "/api/configuration_groups/#{@cg.id}"
+    expect(ConfigurationGroup.count).to eq(pre_create_count)
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response.keys).to include("error")
+  end
 end

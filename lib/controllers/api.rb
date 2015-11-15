@@ -106,11 +106,11 @@ namespace '/api' do
       content_type :json
       # Delete: Configuration Group
       begin
-        @e = ConfigurationGroup.find(params['configuration_group_id'])
-        @e.destroy
+        @cg = ConfigurationGroup.find(params['configuration_group_id'])
+        @cg.destroy
         {'status': 'deleted'}.to_json
-      rescue
-        {'status': 'endpoint not found'}.to_json
+      rescue RuntimeError => e
+        {'status': 'error', error: e.message}.to_json
       end
     end
 
