@@ -174,6 +174,7 @@ describe 'The osquery TLS api' do
     # Make something to delete
     pre_create_count = ConfigurationGroup.count
     post '/api/configuration_groups', {name: "api-test"}.to_json
+    expect(last_response).to be_ok
     response = JSON.parse(last_response.body)
     id = response['configuration_group']['id']
     delete "/api/configuration_groups/#{id}"
@@ -187,9 +188,24 @@ describe 'The osquery TLS api' do
     pre_create_count = ConfigurationGroup.count
 
     delete "/api/configuration_groups/#{@cg.id}"
+    expect(last_response).to be_ok
     expect(ConfigurationGroup.count).to eq(pre_create_count)
     response = JSON.parse(last_response.body)
     expect(response['status']).to eq('error')
     expect(response.keys).to include("error")
+  end
+
+  it "provides detailed information about a ConfigurationGroup" do
+    @cg = ConfigurationGroup.first
+    get "/api/configuration_groups/#{@cg.id}"
+    expect(last_response).to be_ok
+    response = JSON.parse(last_response.body)
+
+    expect(response['id']).to eq(@cg.id)
+    expect(response['default_config_id']).to eq(@cg.default_config.id)
+    expect(response['name']).to eq(@cg.name)
+    expect(response['endpoint_count']).to eq(@cg.endpoints.count)
+    expect(response['endpoint_ids']).to include(@cg.endpoints.first.id)
+    expect(response['configuration_ids']).to include(@cg.configurations.first.id)
   end
 end

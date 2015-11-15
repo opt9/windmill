@@ -84,24 +84,6 @@ namespace '/api' do
       ConfigurationGroup.all.to_json
     end
 
-    get '/:configuration_group_id' do
-      content_type :json
-      # Read: One Configuration Group
-      begin
-        @e = ConfigruationGroup.find(params['configuration_group_id'])
-        @e.destroy
-        {'status': 'deleted'}.to_json
-      rescue
-        {'status': 'configuration group not found'}.to_json
-      end
-    end
-
-    patch '/:configuration_group_id' do
-      content_type :json
-      # Update: Configuration Group
-      {'status': 'configuration group modification via the Windmill API is not supported'}.to_json
-    end
-
     delete '/:configuration_group_id' do
       content_type :json
       # Delete: Configuration Group
@@ -112,6 +94,28 @@ namespace '/api' do
       rescue RuntimeError => e
         {'status': 'error', error: e.message}.to_json
       end
+    end
+
+# This needs fixing. Right now it will delete!
+# Instead, we should use this to return information about the
+# group. For example, id, name, endpoint count, array of endpoints,
+# and array of configurations. Default config, etc.
+    get '/:configuration_group_id' do
+      content_type :json
+      @cg = ConfigurationGroup.find(params['configuration_group_id'])
+      response = {id: @cg.id,
+        name: @cg.name,
+        default_config_id: @cg.default_config.id,
+        endpoint_count: @cg.endpoints.count,
+        endpoint_ids: @cg.endpoints.map {|e| e.id },
+        configuration_ids: @cg.configurations.map {|c| c.id}}
+      response.to_json
+    end
+
+    patch '/:configuration_group_id' do
+      content_type :json
+      # Update: Configuration Group
+      {'status': 'configuration group modification via the Windmill API is not supported'}.to_json
     end
 
     post '/:cg_id/configuration/new' do
