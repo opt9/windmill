@@ -169,4 +169,16 @@ describe 'The osquery TLS api' do
     response = JSON.parse(last_response.body)
     expect(response.length).to eq(ConfigurationGroup.count)
   end
+
+  it "allows you to delete an empty ConfigurationGroup" do
+    # Make something to delete
+    pre_create_count = ConfigurationGroup.count
+    post '/api/configuration_groups', {name: "api-test"}.to_json
+    response = JSON.parse(last_response.body)
+    id = response['configuration_group']['id']
+    delete "/api/configuration_groups/#{id}"
+    expect(ConfigurationGroup.count).to eq(pre_create_count)
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('deleted')
+  end
 end
