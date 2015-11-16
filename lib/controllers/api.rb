@@ -63,6 +63,18 @@ namespace '/api' do
       Configuration.all.to_json
     end
 
+    namespace '/:config_id' do
+      delete do
+        content_type :json
+        begin
+          @config = Configuration.find(params[:config_id])
+          @config.destroy
+          {status: 'deleted'}.to_json
+        rescue RuntimeError => e
+          {'status': 'error', error: e.message}.to_json
+        end
+      end
+    end
     get '/:configuration_id' do
       content_type :json
       # Read: One Configuration
@@ -77,19 +89,6 @@ namespace '/api' do
       content_type :json
       # Update: Configuration
       {'status': 'Configuration modification via the Windmill API is not supported.'}.to_json
-    end
-
-    delete '/:configuration_id' do
-      content_type :json
-      # Delete: Configuration
-
-      begin
-        @c = Configruation.find(params['configuration_id'])
-        @c.destroy
-        {'status': 'deleted'}.to_json
-      rescue
-        {'status': 'configuration not found'}.to_json
-      end
     end
   end
 

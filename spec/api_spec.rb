@@ -259,4 +259,28 @@ describe 'The osquery TLS api' do
     expect(response['config']['config_json']).to eq({test:"test"}.to_json)
     expect(response['config']['configuration_group_id']).to eq(@cg.id)
   end
+
+  it "allows you to delete an unassigned Configuration from a ConfigurationGroup" do
+    @cg = ConfigurationGroup.first
+    @config = @cg.configurations.create!(name:"api-test", version:1, notes:"test", config_json: {test:"test"}.to_json)
+    pre_delete_count = @cg.configurations.count
+    delete "/api/configurations/#{@config.id}"
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    expect(@cg.configurations.count).to eq(pre_delete_count - 1)
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('deleted')
+  end
+
+  it "doesn't allow you to delete a Configuration with assigned endpoints" do
+    @cg = ConfigurationGroup.first
+    pre_delete_count = @cg.configurations.count
+    delete "/api/configurations/#{@cg.configurations.first.id}"
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    expect(@cg.configurations.count).to eq(pre_delete_count)
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response.keys).to include('error')
+  end
 end
