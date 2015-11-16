@@ -159,6 +159,7 @@ describe 'The osquery TLS api' do
     expect(@endpoint.last_version).to eq("version2")
   end
 
+# ConfigurationGroup management
   it "allows you to create a new configuration group" do
     pre_create_count = ConfigurationGroup.count
     post '/api/configuration_groups', {name: "api-test"}.to_json
@@ -260,6 +261,47 @@ describe 'The osquery TLS api' do
     expect(response['config']['configuration_group_id']).to eq(@cg.id)
   end
 
+# Configuration management
+  it "allows you to create a new Configuration" do
+    pre_create_count = @cg.configurations.count
+    post "/api/configurations", {name: "api-test",
+      version: 1,
+      notes: "test",
+      config_json: {test: "test"}.to_json,
+      configuration_group_id: @cg.id}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('success')
+    expect(response['config'].keys).to include('id')
+    expect(response['config']['name']).to eq("api-test")
+    expect(response['config']['version']).to eq(1)
+    expect(response['config']['config_json']).to eq({test:"test"}.to_json)
+    expect(response['config']['configuration_group_id']).to eq(@cg.id)
+  end
+
+  it "provides a resonable error message when it fails to create a Configuration" do
+    pre_create_count = Configuration.count
+    # missing configuration_group_id, not valid
+    post "/api/configurations", {name: "api-test",
+      version: 1,
+      notes: "test",
+      config_json: {test: "test"}.to_json}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response.keys).to include('error')
+  end
+
+  it "allows you to get an index of Configurations" do
+    get "/api/configurations"
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response.length).to eq(Configuration.all.count)
+  end
+
   it "allows you to delete an unassigned Configuration from a ConfigurationGroup" do
     @cg = ConfigurationGroup.first
     @config = @cg.configurations.create!(name:"api-test", version:1, notes:"test", config_json: {test:"test"}.to_json)
@@ -270,14 +312,6 @@ describe 'The osquery TLS api' do
     expect(@cg.configurations.count).to eq(pre_delete_count - 1)
     response = JSON.parse(last_response.body)
     expect(response['status']).to eq('deleted')
-  end
-
-  it "allows you to get an index of Configurations" do
-    get "/api/configurations"
-    expect(last_response).to be_ok
-    expect(last_response.content_type).to eq("application/json")
-    response = JSON.parse(last_response.body)
-    expect(response.length).to eq(Configuration.all.count)
   end
 
   it "doesn't allow you to delete a Configuration with assigned endpoints" do

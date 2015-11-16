@@ -37,23 +37,24 @@ namespace '/api' do
   namespace '/configurations' do
     # CRUD CONFIG
 
-    post '/new' do
+    post do
       content_type :json
-      # Create: Configuration
       json_data = JSON.parse(request.body.read)
+      # Create: Configuration
+      begin
+        @cg = ConfigurationGroup.find(json_data['configuration_group_id'])
+      rescue ActiveRecord::RecordNotFound => e
+        return {'status': 'error', error: e.message}.to_json
+      end
 
-      if json_data['cg_id']
-
-        @cg = ConfigurationGroup.find(json_data['cg_id'])
-        @c = @cg.configurations.build(name: json_data['name'], config_json: json_data['configuration'], version: json_data['version'], notes: json_data['notes'])
-        @c.save
-        if @c.save
-          {'status': 'created', 'configuration': @c}.to_json
-        else
-          {'status': 'configuration creation failed', 'error': @c.errors}.to_json
-        end
+      @c = @cg.configurations.build(name: json_data['name'],
+        config_json: json_data['config_json'],
+        version: json_data['version'],
+        notes: json_data['notes'])
+      if @c.save
+        {'status': 'success', 'config': @c}.to_json
       else
-        {'status': 'no configuration group specified'}.to_json
+        {'status': 'error', 'error': @c.errors}.to_json
       end
     end
 
