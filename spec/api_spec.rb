@@ -272,6 +272,14 @@ describe 'The osquery TLS api' do
     expect(response['status']).to eq('deleted')
   end
 
+  it "allows you to get an index of Configurations" do
+    get "/api/configurations"
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response.length).to eq(Configuration.all.count)
+  end
+
   it "doesn't allow you to delete a Configuration with assigned endpoints" do
     @cg = ConfigurationGroup.first
     pre_delete_count = @cg.configurations.count
