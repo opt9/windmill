@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Your API Keys</div>
+
+    <!-- Table -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Notes</th>
+          <th>Permissions</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @keys.each do |key| %>
+          <tr>
+            <td><%= key.notes %></td>
+            <td><%= key.perms %></td>
+            <td>show, revoke</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div> <!-- /container -->

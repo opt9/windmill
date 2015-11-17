@@ -22,8 +22,8 @@ namespace '/api' do
 
   post '/config' do
         content_type :json
-    # This next line is necessary because osqueryd does not send the
-    # enroll_secret as a POST param.
+      # This next line is necessary if you want to test with curl without
+      # using the -H option
     begin
       params.merge!(JSON.parse(request.body.read))
     rescue

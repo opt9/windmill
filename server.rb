@@ -13,9 +13,11 @@ require_relative 'lib/models/endpoint'
 require_relative 'lib/models/configuration'
 require_relative 'lib/models/configuration_group'
 require_relative 'lib/models/enroller'
+require_relative 'lib/models/api_key'
 require_relative 'lib/controllers/auth'
 require_relative 'lib/controllers/configuration_groups'
 require_relative 'lib/controllers/api'
+require_relative 'lib/controllers/apikeys'
 
 disable :show_exceptions
 
@@ -56,6 +58,7 @@ before do
   pass if request.path_info =~ /^\/auth\//
   pass if request.path_info =~ /^\/api\//
   pass if request.path_info =~ /^\/status/
+  session[:email] = "kdt@heroku.com"
   redirect to('/auth/login') unless current_user
 end
 
