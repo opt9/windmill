@@ -58,7 +58,6 @@ before do
   pass if request.path_info =~ /^\/auth\//
   pass if request.path_info =~ /^\/api\//
   pass if request.path_info =~ /^\/status/
-  session[:email] = "kdt@heroku.com"
   redirect to('/auth/login') unless current_user
 end
 

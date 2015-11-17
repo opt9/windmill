@@ -2,7 +2,7 @@
   <form action="<%= "/apikeys" %>" method="post">
     <div class="form-group">
       <label>Key</label>
-      <input type="text" class="form-control" name="apikey[key]" placeholder="<%= @key.key %>">
+      <input type="text" class="form-control" name="apikey[key]" value="<%= @key.key %>">
     </div>
 
     <div class="form-group">
@@ -20,4 +20,5 @@
     </div>
 
     <button type="submit" class="btn btn-default">Add</button>
+  </form>
 </div>
