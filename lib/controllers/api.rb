@@ -13,8 +13,8 @@ namespace '/api' do
 
   post '/enroll' do
     content_type :json
-    # This next line is necessary because osqueryd does not send the
-    # enroll_secret as a POST param.
+    # This next line is necessary if you want to test with curl without
+    # using the -H option
     begin
       json_data = JSON.parse(request.body.read)
       params.merge!(json_data)
@@ -85,24 +85,54 @@ namespace '/api' do
           {'status': 'error', error: e.message}.to_json
         end
       end
-    end
-    get '/:configuration_id' do
-      content_type :json
-      error 401 unless valid_key?(params[:key])
-      # Read: One Configuration
-      begin
-        Configuration.find(params['configuration_id']).to_json
-      rescue
-        {'status': 'configuration not found'}.to_json
-      end
-    end
 
-    patch '/:configuration_id' do
-      content_type :json
-      # Update: Configuration
-      {'status': 'Configuration modification via the Windmill API is not supported.'}.to_json
-    end
-  end
+      get do
+        # Read: One Configuration
+        content_type :json
+        begin
+          @config = Configuration.find(params[:config_id])
+          response = {id: @config.id,
+            name: @config.name,
+            version: @config.version,
+            notes: @config.notes,
+            config_json: @config.config_json,
+            assigned_endpoints: @config.assigned_endpoints.map {|e| e.id},
+            assigned_endpoint_count: @config.assigned_endpoints.count,
+            configured_endpoints: @config.configured_endpoints.map {|e| e.id},
+            configured_endpoint_count: @config.configured_endpoints.count}.to_json
+        rescue ActiveRecord::RecordNotFound => e
+          return {'status': 'error', error: e.message}.to_json
+        end
+      end
+
+      patch do
+        content_type :json
+        json_data = JSON.parse(request.body.read)
+        begin
+          @config = Configuration.find(params[:config_id])
+
+          if @config.assigned_endpoints.count > 0 and json_data.keys.include? "config_json"
+            return {status: "error", error: "Cannot modify config_json when Configuration has assigned endpoints."}.to_json
+          end
+
+          ["name", "version", "notes", "config_json"].each do |key|
+            if json_data[key]
+              @config[key] = json_data[key]
+            end
+          end
+
+          if @config.save
+            return {status: "success", config: @config}.to_json
+          else
+            return {status: "error", error: @config.errors}
+          end
+
+        rescue ActiveRecord::RecordNotFound => e
+          return {'status': 'error', error: e.message}.to_json
+        end
+      end
+    end # end namespace /configurations/:config_id
+  end # end namespace /configurations
 
   namespace '/configuration_groups' do
 
@@ -144,15 +174,18 @@ namespace '/api' do
 
       get do
         content_type :json
-        error 401 unless valid_key?(params[:key])
-        @cg = ConfigurationGroup.find(params[:cg_id])
-        response = {id: @cg.id,
-          name: @cg.name,
-          default_config_id: @cg.default_config.id,
-          endpoint_count: @cg.endpoints.count,
-          endpoint_ids: @cg.endpoints.map {|e| e.id },
-          configuration_ids: @cg.configurations.map {|c| c.id}}
-        response.to_json
+        begin
+          @cg = ConfigurationGroup.find(params[:cg_id])
+          response = {id: @cg.id,
+            name: @cg.name,
+            default_config_id: @cg.default_config.id,
+            endpoint_count: @cg.endpoints.count,
+            endpoint_ids: @cg.endpoints.map {|e| e.id },
+            configuration_ids: @cg.configurations.map {|c| c.id}}
+          response.to_json
+        rescue ActiveRecord::RecordNotFound => e
+          return {'status': 'error', error: e.message}.to_json
+        end
       end
 
       patch do

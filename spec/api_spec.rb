@@ -233,6 +233,15 @@ describe 'The osquery TLS api' do
     expect(response['configuration_ids']).to include(@cg.configurations.first.id)
   end
 
+  it "provides a reasonable error when a ConfigurationGroup is not found" do
+    get "/api/configuration_groups/99999" # not likely to be in test database
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response.keys).to include('error')
+  end
+
   it "allows you to get a list of all Configurations belonging to a ConfigurationGroup" do
     @cg = ConfigurationGroup.first
     get "/api/configuration_groups/#{@cg.id}/configurations"
@@ -324,5 +333,74 @@ describe 'The osquery TLS api' do
     response = JSON.parse(last_response.body)
     expect(response['status']).to eq('error')
     expect(response.keys).to include('error')
+  end
+
+  it "provides detailed information about a Configuration" do
+    @config = @cg.configurations.first
+    get "/api/configurations/#{@config.id}"
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['id']).to eq(@config.id)
+    expect(response['name']).to eq(@config.name)
+    expect(response['version']).to eq(@config.version)
+    expect(response['notes']).to eq(@config.notes)
+    expect(response['config_json']).to eq(@config.config_json)
+    expect(response['assigned_endpoint_count']).to eq(@config.assigned_endpoints.count)
+    expect(response['assigned_endpoints']).to include(@config.assigned_endpoints.first.id)
+    expect(response.keys).to include('configured_endpoints')
+    expect(response['configured_endpoint_count']).to eq(@config.configured_endpoints.count)
+  end
+
+  it "provides a resonable error when a Configuration is not found" do
+    get "/api/configurations/99999" # not likely to be in test database
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response.keys).to include('error')
+  end
+
+  it "allows you to edit all information of a Configuration with no assigned Endpoints" do
+    @config = @cg.configurations.create(name:"api-test", version:1, notes:"test", config_json: {test:"test"}.to_json)
+    patch "/api/configurations/#{@config.id}", {name: "changed",
+      version: 2,
+      notes: "changed",
+      config_json: {test: "changed"}.to_json.to_s}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('success')
+    expect(response['config']['id']).to eq(@config.id)
+    expect(response['config']['name']).to eq("changed")
+    expect(response['config']['version']).to eq(2)
+    expect(response['config']['notes']).to eq("changed")
+    expect(response['config']['config_json']).to eq({test: "changed"}.to_json)
+  end
+
+  it "disallows changes to config_json when Configuration has assigned endpoints" do
+    @endpoint.assigned_config = @config
+    @endpoint.save
+    patch "/api/configurations/#{@config.id}", {name: "changed",
+      version: 2,
+      notes: "changed",
+      config_json: {test: "changed"}.to_json.to_s}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response['error']).to eq("Cannot modify config_json when Configuration has assigned endpoints.")
+  end
+
+  it "provides a resonable error when trying to edit a missing Configuration" do
+    patch "/api/configurations/99999", {name: "changed",
+      version: 2,
+      notes: "changed",
+      config_json: {test: "changed"}.to_json.to_s}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response['error']).to eq("Couldn't find Configuration with 'id'=99999")
   end
 end
