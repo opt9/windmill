@@ -2,7 +2,7 @@ namespace '/api' do
 
   helpers do
     def valid_key? (key)
-      false
+      ENV['API_KEYS'].split(",").include? key
     end
   end
 
