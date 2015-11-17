@@ -75,7 +75,7 @@ namespace '/api' do
           {'status': 'error', error: e.message}.to_json
         end
       end
-    end
+    end # end namespace /configurations/:config_id
     get '/:configuration_id' do
       content_type :json
       # Read: One Configuration
@@ -91,7 +91,7 @@ namespace '/api' do
       # Update: Configuration
       {'status': 'Configuration modification via the Windmill API is not supported.'}.to_json
     end
-  end
+  end # end namespace /configurations
 
   namespace '/configuration_groups' do
 
