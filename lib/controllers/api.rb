@@ -93,25 +93,35 @@ namespace '/api' do
         rescue ActiveRecord::RecordNotFound => e
           return {'status': 'error', error: e.message}.to_json
         end
+      end
 
+      patch do
+        content_type :json
+        json_data = JSON.parse(request.body.read)
+        begin
+          @config = Configuration.find(params[:config_id])
+
+          if @config.assigned_endpoints.count > 0 and json_data.keys.include? "config_json"
+            return {status: "error", error: "Cannot modify config_json when Configuration has assigned endpoints."}.to_json
+          end
+
+          ["name", "version", "notes", "config_json"].each do |key|
+            if json_data[key]
+              @config[key] = json_data[key]
+            end
+          end
+
+          if @config.save
+            return {status: "success", config: @config}.to_json
+          else
+            return {status: "error", error: @config.errors}
+          end
+
+        rescue ActiveRecord::RecordNotFound => e
+          return {'status': 'error', error: e.message}.to_json
+        end
       end
     end # end namespace /configurations/:config_id
-
-    get '/:configuration_id' do
-      content_type :json
-
-      begin
-        Configuration.find(params['configuration_id']).to_json
-      rescue
-        {'status': 'configuration not found'}.to_json
-      end
-    end
-
-    patch '/:configuration_id' do
-      content_type :json
-      # Update: Configuration
-      {'status': 'Configuration modification via the Windmill API is not supported.'}.to_json
-    end
   end # end namespace /configurations
 
   namespace '/configuration_groups' do

@@ -360,4 +360,47 @@ describe 'The osquery TLS api' do
     expect(response['status']).to eq('error')
     expect(response.keys).to include('error')
   end
+
+  it "allows you to edit all information of a Configuration with no assigned Endpoints" do
+    @config = @cg.configurations.create(name:"api-test", version:1, notes:"test", config_json: {test:"test"}.to_json)
+    patch "/api/configurations/#{@config.id}", {name: "changed",
+      version: 2,
+      notes: "changed",
+      config_json: {test: "changed"}.to_json.to_s}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('success')
+    expect(response['config']['id']).to eq(@config.id)
+    expect(response['config']['name']).to eq("changed")
+    expect(response['config']['version']).to eq(2)
+    expect(response['config']['notes']).to eq("changed")
+    expect(response['config']['config_json']).to eq({test: "changed"}.to_json)
+  end
+
+  it "disallows changes to config_json when Configuration has assigned endpoints" do
+    @endpoint.assigned_config = @config
+    @endpoint.save
+    patch "/api/configurations/#{@config.id}", {name: "changed",
+      version: 2,
+      notes: "changed",
+      config_json: {test: "changed"}.to_json.to_s}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response['error']).to eq("Cannot modify config_json when Configuration has assigned endpoints.")
+  end
+
+  it "provides a resonable error when trying to edit a missing Configuration" do
+    patch "/api/configurations/99999", {name: "changed",
+      version: 2,
+      notes: "changed",
+      config_json: {test: "changed"}.to_json.to_s}.to_json
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to eq("application/json")
+    response = JSON.parse(last_response.body)
+    expect(response['status']).to eq('error')
+    expect(response['error']).to eq("Couldn't find Configuration with 'id'=99999")
+  end
 end
