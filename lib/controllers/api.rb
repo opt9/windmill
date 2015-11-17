@@ -75,10 +75,31 @@ namespace '/api' do
           {'status': 'error', error: e.message}.to_json
         end
       end
+
+      get do
+        # Read: One Configuration
+        content_type :json
+        begin
+          @config = Configuration.find(params[:config_id])
+          response = {id: @config.id,
+            name: @config.name,
+            version: @config.version,
+            notes: @config.notes,
+            config_json: @config.config_json,
+            assigned_endpoints: @config.assigned_endpoints.map {|e| e.id},
+            assigned_endpoint_count: @config.assigned_endpoints.count,
+            configured_endpoints: @config.configured_endpoints.map {|e| e.id},
+            configured_endpoint_count: @config.configured_endpoints.count}.to_json
+        rescue ActiveRecord::RecordNotFound => e
+          return {'status': 'error', error: e.message}.to_json
+        end
+
+      end
     end # end namespace /configurations/:config_id
+
     get '/:configuration_id' do
       content_type :json
-      # Read: One Configuration
+
       begin
         Configuration.find(params['configuration_id']).to_json
       rescue
@@ -130,14 +151,18 @@ namespace '/api' do
 
       get do
         content_type :json
-        @cg = ConfigurationGroup.find(params[:cg_id])
-        response = {id: @cg.id,
-          name: @cg.name,
-          default_config_id: @cg.default_config.id,
-          endpoint_count: @cg.endpoints.count,
-          endpoint_ids: @cg.endpoints.map {|e| e.id },
-          configuration_ids: @cg.configurations.map {|c| c.id}}
-        response.to_json
+        begin
+          @cg = ConfigurationGroup.find(params[:cg_id])
+          response = {id: @cg.id,
+            name: @cg.name,
+            default_config_id: @cg.default_config.id,
+            endpoint_count: @cg.endpoints.count,
+            endpoint_ids: @cg.endpoints.map {|e| e.id },
+            configuration_ids: @cg.configurations.map {|c| c.id}}
+          response.to_json
+        rescue ActiveRecord::RecordNotFound => e
+          return {'status': 'error', error: e.message}.to_json
+        end
       end
 
       patch do
