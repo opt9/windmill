@@ -1,4 +1,11 @@
 namespace '/api' do
+
+  helpers do
+    def valid_key? (key)
+      false
+    end
+  end
+
   get '/status' do
     content_type :json
     {"status": "running", "timestamp": Time.now}.to_json
@@ -21,7 +28,7 @@ namespace '/api' do
   end
 
   post '/config' do
-        content_type :json
+    content_type :json
     # This next line is necessary because osqueryd does not send the
     # enroll_secret as a POST param.
     begin
@@ -39,6 +46,7 @@ namespace '/api' do
 
     post do
       content_type :json
+      error 401 unless valid_key?(params[:key])
       json_data = JSON.parse(request.body.read)
       # Create: Configuration
       begin
@@ -60,6 +68,7 @@ namespace '/api' do
 
     get do
       content_type :json
+      error 401 unless valid_key?(params[:key])
       # Read: All Configurations
       Configuration.all.to_json
     end
@@ -67,6 +76,7 @@ namespace '/api' do
     namespace '/:config_id' do
       delete do
         content_type :json
+        error 401 unless valid_key?(params[:key])
         begin
           @config = Configuration.find(params[:config_id])
           @config.destroy
@@ -78,6 +88,7 @@ namespace '/api' do
     end
     get '/:configuration_id' do
       content_type :json
+      error 401 unless valid_key?(params[:key])
       # Read: One Configuration
       begin
         Configuration.find(params['configuration_id']).to_json
@@ -98,6 +109,7 @@ namespace '/api' do
     post do
       # Create: Configuration Group
       content_type :json
+      error 401 unless valid_key?(params[:key])
 
       json_data = JSON.parse(request.body.read)
       @cg = ConfigurationGroup.create(name: json_data['name'])
@@ -112,12 +124,14 @@ namespace '/api' do
     get do
       # Read: All Configuration Groups
       content_type :json
+      error 401 unless valid_key?(params[:key])
       ConfigurationGroup.all.to_json
     end
 
     namespace '/:cg_id' do
       delete do
         content_type :json
+        error 401 unless valid_key?(params[:key])
         # Delete: Configuration Group
         begin
           @cg = ConfigurationGroup.find(params[:cg_id])
@@ -130,6 +144,7 @@ namespace '/api' do
 
       get do
         content_type :json
+        error 401 unless valid_key?(params[:key])
         @cg = ConfigurationGroup.find(params[:cg_id])
         response = {id: @cg.id,
           name: @cg.name,
@@ -148,12 +163,14 @@ namespace '/api' do
       namespace '/configurations' do
         get do
           content_type :json
+          error 401 unless valid_key?(params[:key])
           @cg = ConfigurationGroup.find(params[:cg_id])
           @cg.configurations.to_json
         end
 
         post do
           content_type :json
+          error 401 unless valid_key?(params[:key])
           json_data = JSON.parse(request.body.read)
           @cg = ConfigurationGroup.find(params[:cg_id])
           @config = @cg.configurations.build(name: json_data['name'],
@@ -174,12 +191,14 @@ namespace '/api' do
   namespace '/endpoints' do
     post do
       content_type :json
+      error 401 unless valid_key?(params[:key])
       # Create: Endpoint. Not implimented deliberately. Should be registered by osquery.
       {'status': 'endpoint creation via the Windmill API is not supported'}.to_json
     end
 
     get do
       content_type :json
+      error 401 unless valid_key?(params[:key])
       # Read: All Endpoints
       begin
         Endpoint.all.to_json
@@ -190,6 +209,7 @@ namespace '/api' do
 
     get '/:endpoint_id' do
       content_type :json
+      error 401 unless valid_key?(params[:key])
       # Read: One Endpoint
       begin
         Endpoint.find(params['endpoint_id']).to_json
@@ -200,12 +220,14 @@ namespace '/api' do
 
     patch '/:endpoint' do
       content_type :json
+      error 401 unless valid_key?(params[:key])
       # Update: Not implimented deliberately. Should be updated by osquery.
       {'status': 'endpoint updating via the Windmill API is not supported'}.to_json
     end
 
     delete '/:endpoint_id' do
       content_type :json
+      error 401 unless valid_key?(params[:key])
       # Delete: One Endpoint
       begin
         @e = Endpoint.find(params['endpoint_id'])
