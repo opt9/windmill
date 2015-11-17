@@ -11,5 +11,5 @@ class APIKey < ActiveRecord::Base
 
   PERMS = %w(read read/write)
 
-  validates :key, :perms, :user, presence: true
+  validates :key, :perms, presence: true
 end

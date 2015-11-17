@@ -1,13 +1,12 @@
 namespace '/apikeys' do
   get do
-    @keys = APIKey.where user: current_user
+    @keys = APIKey.all
     erb :"apikeys/index"
   end
 
   post do
     puts '#################'
     @key = APIKey.new params[:apikey]
-    @key.user = current_user
     puts @key.inspect
 
     if @key.save
