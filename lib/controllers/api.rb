@@ -129,8 +129,12 @@ namespace '/api' do
     post do
       # Create: Configuration Group
       content_type :json
-
       json_data = JSON.parse(request.body.read)
+      
+      if !apivalid?(json_data['apikey'], perm: :write)
+        return {status: 'failed', message: 'invalid api key or insufficient permissions'}.to_json
+      end
+      
       @cg = ConfigurationGroup.create(name: json_data['name'])
       if @cg.save
         {'status': 'created', 'configuration_group': @cg}.to_json

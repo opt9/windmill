@@ -83,6 +83,27 @@ helpers do
     end
     returnstring
   end
+  
+  def apivalid?(inKey, perm: :read)
+    if ENV['RACK_ENV'] == 'test'
+      return true
+    end
+    
+    begin
+      @key = APIKey.find_by! key: inKey
+      if perm == :read
+        return true
+      end
+      
+      if perm == :write and @key.perms == "read"
+        return false
+      else
+        return true
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      return false
+    end
+  end
 end
 
 get '/status' do
