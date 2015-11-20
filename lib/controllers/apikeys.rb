@@ -23,4 +23,22 @@ namespace '/apikeys' do
     @key.key = SecureRandom.uuid
     erb :"apikeys/new"
   end
+
+  namespace '/:key_id' do
+    delete do
+      begin
+        @key = APIKey.find(params[:key_id])
+      rescue ActiveRecord::RecordNotFound => e
+        flash[:warning] = "Key not found"
+      end
+
+      if @key.destroy
+        flash[:notice] = "Key destroyed"
+      else
+        flash[:warning] = "Failed to destroy key. #{@key.errors.messages.to_s}"
+      end
+
+      redirect "/apikeys"
+    end
+  end
 end

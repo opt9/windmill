@@ -17,7 +17,13 @@
           <tr>
             <td><%= key.notes %></td>
             <td><%= key.perms %></td>
-            <td>show, revoke</td>
+            <td>
+              show
+              <form action="<%= "/apikeys/#{key.id}" %>" method="POST">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" class="btn btn-sm btn-danger" value="revoke">
+              </form>
+            </td>
           </tr>
         <% end %>
       </tbody>

@@ -55,6 +55,7 @@ configure do
 end
 
 before do
+  session[:email] = "kdt@heroku.com"
   pass if request.path_info =~ /^\/auth\//
   pass if request.path_info =~ /^\/api\//
   pass if request.path_info =~ /^\/status/
