@@ -4,9 +4,10 @@
     <div class="panel-heading">Active API Keys</div>
 
     <!-- Table -->
-    <table class="table">
+    <table class="table" border=1>
       <thead>
         <tr>
+          <th>Key</th>
           <th>Notes</th>
           <th>Permissions</th>
           <th>Action</th>
@@ -15,10 +16,10 @@
       <tbody>
         <% @keys.each do |key| %>
           <tr>
+            <td><%= key.key %></td>
             <td><%= key.notes %></td>
             <td><%= key.perms %></td>
             <td>
-              show
               <form action="<%= "/apikeys/#{key.id}" %>" method="POST">
                 <input type="hidden" name="_method" value="DELETE">
                 <input type="submit" class="btn btn-sm btn-danger" value="revoke">

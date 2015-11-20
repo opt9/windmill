@@ -10,7 +10,7 @@ namespace '/apikeys' do
     puts @key.inspect
 
     if @key.save
-      flash[:notice] = "Key created successfully"
+      flash[:notice] = "Key created successfully: #{@key.key}"
       redirect "/apikeys"
     else
       flash[:warning] = @key.errors.messages.to_s
@@ -19,8 +19,8 @@ namespace '/apikeys' do
   end
 
   get '/new' do
-    @key = APIKey.new
-    @key.key = SecureRandom.uuid
+    # @key = APIKey.new
+    # @key.key = SecureRandom.uuid
     erb :"apikeys/new"
   end
 
