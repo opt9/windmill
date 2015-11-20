@@ -7,9 +7,14 @@ class APIKey < ActiveRecord::Base
   # key index
   # notes
   # perms
-  # user
 
   PERMS = %w(read read/write)
 
-  validates :key, :perms, presence: true
+  validates :perms, presence: true
+
+  before_create :generate_random_key
+
+  def generate_random_key
+    self.key = SecureRandom.hex(32)
+  end
 end
