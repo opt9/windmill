@@ -20,6 +20,9 @@ class Endpoint < ActiveRecord::Base
   belongs_to :configuration_group
   after_initialize :post_init
 
+  # For pagination
+  self.per_page = 100
+
 
   def post_init
     self.config_count = self.config_count || 0

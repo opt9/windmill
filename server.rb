@@ -9,6 +9,8 @@ require 'omniauth-google-oauth2'
 require 'securerandom'
 require 'encrypted_cookie'
 require 'time_difference'
+require 'will_paginate'
+require 'will_paginate/active_record'
 require_relative 'lib/models/endpoint'
 require_relative 'lib/models/configuration'
 require_relative 'lib/models/configuration_group'
@@ -169,6 +171,7 @@ namespace '/configuration-groups' do
   namespace '/:cg_id' do
     get do
       @cg = GuaranteedConfigurationGroup.find(params[:cg_id])
+      @endpoints = @cg.endpoints.page(params[:page])
       @default_config = @cg.default_config
       if @cg.canary_in_progress?
         flash.now[:notice] = "Canary deployment in progress."
