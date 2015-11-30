@@ -11,7 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151014140748) do
+ActiveRecord::Schema.define(version: 20151117161731) do
+
+  create_table "api_keys", force: :cascade do |t|
+    t.string   "key",        null: false
+    t.string   "notes"
+    t.string   "perms",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "api_keys", ["key"], name: "index_api_keys_on_key"
 
   create_table "configuration_groups", force: :cascade do |t|
     t.string   "name",              null: false

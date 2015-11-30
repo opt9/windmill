@@ -28,9 +28,9 @@ namespace '/api' do
   end
 
   post '/config' do
-    content_type :json
-    # This next line is necessary because osqueryd does not send the
-    # enroll_secret as a POST param.
+      content_type :json
+      # This next line is necessary if you want to test with curl without
+      # using the -H option
     begin
       params.merge!(JSON.parse(request.body.read))
     rescue
@@ -39,8 +39,7 @@ namespace '/api' do
     client = GuaranteedEndpoint.find_by node_key: params['node_key']
     logdebug "Received endpoint: #{client.inspect}"
     client.get_config user_agent: request.user_agent
-  end
-
+  en
   namespace '/configurations' do
     # CRUD CONFIG
 
