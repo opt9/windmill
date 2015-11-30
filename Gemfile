@@ -14,6 +14,7 @@ gem 'omniauth-heroku'
 gem 'omniauth-google-oauth2'
 gem 'encrypted_cookie'
 gem 'time_difference'
+gem 'will_paginate'
 
 group :test, :development do
   gem 'sqlite3'

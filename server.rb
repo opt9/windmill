@@ -9,6 +9,8 @@ require 'omniauth-google-oauth2'
 require 'securerandom'
 require 'encrypted_cookie'
 require 'time_difference'
+require 'will_paginate'
+require 'will_paginate/active_record'
 require_relative 'lib/models/endpoint'
 require_relative 'lib/models/configuration'
 require_relative 'lib/models/configuration_group'
@@ -25,7 +27,7 @@ NODE_ENROLL_SECRET = ENV['NODE_ENROLL_SECRET'] || "valid_test"
 
 use Rack::Session::EncryptedCookie, expire_after: 86_400, secret: ENV['COOKIE_SECRET'] || SecureRandom.hex(64)
 use OmniAuth::Builder do
-  provider :github, ENV['GITHUB_KEY'], ENV['GITHUB_SECRET'], scope: "user:email"
+  provider :github, ENV['GITHUB_KEY'], ENV['GITHUB_SECRET'],lict scope: "user:email"
   provider :heroku, ENV['HEROKU_KEY'], ENV['HEROKU_SECRET'], fetch_info: true, scope: "identity"
   provider :google_oauth2, ENV['GOOGLE_ID'], ENV['GOOGLE_SECRET'], name: 'google'
 end
@@ -91,4 +93,39 @@ end
 
 get '/' do
   redirect '/configuration-groups'
+end
+
+namespace '/auth' do
+  get '/login' do
+    erb :"auth/login", layout: :'login_layout'
+  end
+
+  get '/:provider/callback' do
+    logdebug JSON.pretty_generate(request.env['omniauth.auth'])
+    email = env['omniauth.auth']['info']['email']
+    if settings.authorized_users.include? email
+      session[:email] = email
+      flash[:notice] = "#{email} logged in successfully."
+      redirect to('/')
+    end
+    flash[:warning] = "#{email} logged in successfully but not authorized in authorized_users.txt"
+    redirect to('/auth/login')
+  end
+
+  get '/failure' do
+    flash[:warning] = "Authentication failed."
+    redirect to('/auth/login')
+    # erb "<h1>Authentication Failed:</h1><h3>message:<h3> <pre>#{params}</pre>"
+  end
+
+  get '/:provider/deauthorized' do
+    erb "#{params[:provider]} has deauthorized this app."
+  end
+
+  get '/logout' do
+    email = session[:email]
+    session[:email] = nil
+    flash[:notice] = "#{email} logged out successfully."
+    redirect to('/')
+  end
 end

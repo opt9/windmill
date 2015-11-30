@@ -48,5 +48,4 @@ describe "osquery configuration files" do
   it "should throw an error if you try to delete a configuration that is assigned to endpoints" do
     expect {@config.destroy}.to raise_error(RuntimeError)
   end
-
 end

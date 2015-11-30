@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-
 describe 'The osquery TLS app' do
   include Rack::Test::Methods
 

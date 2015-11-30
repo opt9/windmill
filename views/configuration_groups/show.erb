@@ -52,8 +52,8 @@
 
 
 
-  <h2>Endpoints in this group (<%= @cg.endpoints.count %>)</h2>
-
+  <h2>Endpoints in this group (<%= @endpoints.count %>)</h2>
+  <%= will_paginate @endpoints %>
   <table class="table">
     <thead>
       <tr>
@@ -66,7 +66,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @cg.endpoints.each do |endpoint| %>
+      <% @endpoints.each do |endpoint| %>
         <tr>
           <td><%= endpoint.identifier %></td>
           <td><%= endpoint.last_version %></td>
@@ -77,4 +77,5 @@
       <% end %>
     </tbody>
   </table>
+  <%= will_paginate @endpoints %>
 </div>
