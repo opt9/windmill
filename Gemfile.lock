@@ -26,6 +26,7 @@ GEM
       xpath (~> 2.0)
     database_cleaner (1.4.1)
     diff-lcs (1.2.5)
+    dotenv (2.0.2)
     encrypted_cookie (0.0.4)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
@@ -119,6 +120,7 @@ DEPENDENCIES
   activerecord
   capybara
   database_cleaner
+  dotenv
   encrypted_cookie
   json
   omniauth
