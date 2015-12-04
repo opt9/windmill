@@ -159,7 +159,7 @@ end
 
 namespace '/configuration-groups' do
   get  do
-    @groups = ConfigurationGroup.all
+    @groups = ConfigurationGroup.order("canary_config_id, name")
     erb :"configuration_groups/index"
   end
 
