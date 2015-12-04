@@ -12,6 +12,9 @@ namespace '/configuration-groups' do
   namespace '/:cg_id' do
     get do
       @cg = GuaranteedConfigurationGroup.find(params[:cg_id])
+      #@endpoints = @cg.endpoints
+      @endpoints = @cg.endpoints.page(params[:page])
+
       @default_config = @cg.default_config
       if @cg.canary_in_progress?
         flash.now[:notice] = "Canary deployment in progress."
