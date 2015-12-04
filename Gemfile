@@ -15,6 +15,7 @@ gem 'omniauth-google-oauth2'
 gem 'encrypted_cookie'
 gem 'time_difference'
 gem 'will_paginate'
+gem 'dotenv'
 
 group :test, :development do
   gem 'sqlite3'

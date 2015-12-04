@@ -1,3 +1,5 @@
+require 'dotenv'
+Dotenv.load
 require 'sinatra'
 require 'sinatra/namespace'
 require 'sinatra/flash'
@@ -285,7 +287,9 @@ namespace '/configuration-groups' do
       end
 
       get '/:config_id/edit' do
-        @config = GuaranteedConfiguration.find(params[:config_id])
+        @config = Configuration.find(params[:config_id])
+        @endpoints = @config.assigned_endpoints.order('last_config_time is NULL, last_config_time DESC').page(params[:page])
+
         erb :"configurations/edit"
       end
 
