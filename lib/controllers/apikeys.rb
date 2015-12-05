@@ -5,9 +5,7 @@ namespace '/apikeys' do
   end
 
   post do
-    puts '#################'
     @key = APIKey.new params[:apikey]
-    puts @key.inspect
 
     if @key.save
       flash[:notice] = "Key created successfully: #{@key.key}"

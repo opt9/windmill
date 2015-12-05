@@ -2,7 +2,7 @@ namespace '/auth' do
   get '/login' do
     erb :"auth/login", layout: :'login_layout'
   end
-
+  
   get '/:provider/callback' do
     logdebug JSON.pretty_generate(request.env['omniauth.auth'])
     email = env['omniauth.auth']['info']['email']
@@ -30,5 +30,13 @@ namespace '/auth' do
     session[:email] = nil
     flash[:notice] = "#{email} logged out successfully."
     redirect to('/')
+  end
+  
+  if settings.test?
+    get '/bypass' do
+      logdebug "bypass login in test environment"
+      session[:email] = "test@test.com"
+      redirect to('/')
+    end
   end
 end
