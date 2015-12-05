@@ -138,6 +138,22 @@ To fix this, you need to set yet another environment variable called `FULL_URL`.
 That should have the https address of your server, e.g.
 `https://yourserver.yourdomain.com`.
 
+### API Authentication
+
+If you've logged into the windmill server you can create api keys with either
+read or read/write permission. The resulting key must be passed with every
+api call as an http header called Authentication. For example, using curl you
+could get a list of configuration groups with this command:
+
+```
+curl -i \
+-H "authentication: 0944660295b1e3c09aba1ce7ffcfe5da336a510d9963b94dbb0376153ac31e33" \
+http://localhost:4567/api/configuration_groups
+```
+
+A key with write permission is necessary for any request
+that doesn't use the GET method.
+
 ## Enrolling osquery endpoints
 
 The osquery endpoints will reach out to the TLS server and send a POST to

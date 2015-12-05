@@ -10,10 +10,10 @@ namespace '/api' do
     pass if no_auth.include? request.path_info.split('/').last
 
     if request.get?
-      error 401 unless apivalid?(params[:key])
+      error 401 unless apivalid?(request.env['HTTP_AUTHENTICATION'])
       pass
     end
-    error 401 unless apivalid?(params[:key], perm: :write)
+    error 401 unless apivalid?(request.env['HTTP_AUTHENTICATION'], perm: :write)
   end
 
   get '/status' do
