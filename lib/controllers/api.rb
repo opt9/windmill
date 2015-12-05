@@ -1,6 +1,7 @@
 namespace '/api' do
 
   before do
+    content_type :json
     # This line is necessary because of a sinatra/namespace collision bug
     # https://github.com/sinatra/sinatra-contrib/issues/181
     pass if request.path.include? "apikey"
@@ -16,12 +17,10 @@ namespace '/api' do
   end
 
   get '/status' do
-    content_type :json
     {"status": "running", "timestamp": Time.now}.to_json
   end
 
   post '/enroll' do
-    content_type :json
     # This next line is necessary if you want to test with curl without
     # using the -H option
     begin
@@ -37,7 +36,6 @@ namespace '/api' do
   end
 
   post '/config' do
-      content_type :json
       # This next line is necessary if you want to test with curl without
       # using the -H option
     begin
@@ -54,7 +52,6 @@ namespace '/api' do
     # CRUD CONFIG
 
     post do
-      content_type :json
       json_data = JSON.parse(request.body.read)
       # Create: Configuration
       begin
@@ -75,14 +72,12 @@ namespace '/api' do
     end
 
     get do
-      content_type :json
       # Read: All Configurations
       Configuration.all.to_json
     end
 
     namespace '/:config_id' do
       delete do
-        content_type :json
         begin
           @config = Configuration.find(params[:config_id])
           @config.destroy
@@ -94,7 +89,6 @@ namespace '/api' do
 
       get do
         # Read: One Configuration
-        content_type :json
         begin
           @config = Configuration.find(params[:config_id])
           response = {id: @config.id,
@@ -112,7 +106,6 @@ namespace '/api' do
       end
 
       patch do
-        content_type :json
         json_data = JSON.parse(request.body.read)
         begin
           @config = Configuration.find(params[:config_id])
@@ -144,7 +137,6 @@ namespace '/api' do
 
     post do
       # Create: Configuration Group
-      content_type :json
 
       json_data = JSON.parse(request.body.read)
       @cg = ConfigurationGroup.create(name: json_data['name'])
@@ -158,13 +150,11 @@ namespace '/api' do
 
     get do
       # Read: All Configuration Groups
-      content_type :json
       ConfigurationGroup.all.to_json
     end
 
     namespace '/:cg_id' do
       delete do
-        content_type :json
         # Delete: Configuration Group
         begin
           @cg = ConfigurationGroup.find(params[:cg_id])
@@ -176,7 +166,6 @@ namespace '/api' do
       end
 
       get do
-        content_type :json
         begin
           @cg = ConfigurationGroup.find(params[:cg_id])
           response = {id: @cg.id,
@@ -192,19 +181,16 @@ namespace '/api' do
       end
 
       patch do
-        content_type :json
         {'status': 'configuration group modification via the Windmill API is not supported'}.to_json
       end
 
       namespace '/configurations' do
         get do
-          content_type :json
           @cg = ConfigurationGroup.find(params[:cg_id])
           @cg.configurations.to_json
         end
 
         post do
-          content_type :json
           json_data = JSON.parse(request.body.read)
           @cg = ConfigurationGroup.find(params[:cg_id])
           @config = @cg.configurations.build(name: json_data['name'],
@@ -224,13 +210,11 @@ namespace '/api' do
 
   namespace '/endpoints' do
     post do
-      content_type :json
       # Create: Endpoint. Not implimented deliberately. Should be registered by osquery.
       {'status': 'endpoint creation via the Windmill API is not supported'}.to_json
     end
 
     get do
-      content_type :json
       # Read: All Endpoints
       begin
         Endpoint.all.to_json
@@ -240,7 +224,6 @@ namespace '/api' do
     end
 
     get '/:endpoint_id' do
-      content_type :json
       # Read: One Endpoint
       begin
         Endpoint.find(params['endpoint_id']).to_json
@@ -250,13 +233,11 @@ namespace '/api' do
     end
 
     patch '/:endpoint' do
-      content_type :json
       # Update: Not implimented deliberately. Should be updated by osquery.
       {'status': 'endpoint updating via the Windmill API is not supported'}.to_json
     end
 
     delete '/:endpoint_id' do
-      content_type :json
       # Delete: One Endpoint
       begin
         @e = Endpoint.find(params['endpoint_id'])
