@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Active API Keys</div>
+
+    <!-- Table -->
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Notes</th>
+          <th>Permissions</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @keys.each do |key| %>
+          <tr>
+            <td><%= key.key %></td>
+            <td><%= key.notes %></td>
+            <td><%= key.perms %></td>
+            <td>
+              <form action="<%= "/apikeys/#{key.id}" %>" method="POST">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" class="btn btn-sm btn-danger" value="revoke">
+              </form>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <a class="btn btn-default" href="/apikeys/new">New</a>
+</div> <!-- /container -->

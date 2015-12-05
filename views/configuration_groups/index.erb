@@ -21,7 +21,7 @@
                 <% if cg.name != "default" %>
                   <form action="<%= "/configuration-groups/#{cg.id}" %>" method="POST">
                     <input type="hidden" name="_method" value="DELETE">
-                    <input type="submit" class="btn btn-sm btn-danger" value="delete">
+                    <input type="submit" class="btn btn-xs btn-danger" value="Delete">
                   </form>
                 <% end %>
               <% else %>
@@ -36,8 +36,10 @@
 
 <div class="container">
   <form  method="post">
-    <label>Add new Configuration Group</label>
-    <input class="form-control" type="text" name="name" id="group" placeholder="New Configuration Group">
-    <button type="submit" class="btn btn-default">Submit</button>
+    <div class="form-group">
+      <label>Add new Configuration Group</label>
+      <input class="form-control" type="text" name="name" id="group" placeholder="New Configuration Group">
+    </div>  
+    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>
