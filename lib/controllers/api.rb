@@ -1,10 +1,13 @@
 namespace '/api' do
 
   before do
-    content_type :json
     # This line is necessary because of a sinatra/namespace collision bug
     # https://github.com/sinatra/sinatra-contrib/issues/181
+    # it also has to bhe first line of this before block or
+    # the code will affect /apikey
     pass if request.path.include? "apikey"
+    content_type :json
+
 
     no_auth = %w(status enroll config)
     pass if no_auth.include? request.path_info.split('/').last
