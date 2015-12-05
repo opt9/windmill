@@ -100,7 +100,6 @@ namespace '/configuration-groups' do
       @cg = GuaranteedConfigurationGroup.find(params[:cg_id])
       params["assign_pct"].each do |key, value|
         if value != ""
-          puts "Looks like you want to assign #{value} percent to #{key}"
           @config = GuaranteedConfiguration.find(key)
           @cg.assign_config_percent(@config, value.to_i)
           break
@@ -118,9 +117,7 @@ namespace '/configuration-groups' do
 
       post do
         @cg = GuaranteedConfigurationGroup.find(params[:cg_id])
-        puts "we're good"
         @config = @cg.configurations.build(params[:config])
-        puts @config.inspect
         if @config.save
           redirect "/configuration-groups/#{@cg.id}"
         else
