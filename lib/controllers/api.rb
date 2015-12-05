@@ -83,6 +83,7 @@ namespace '/api' do
       get do
         # Read: One Configuration
         content_type :json
+        error 401 unless apivalid?(params[:key])
         begin
           @config = Configuration.find(params[:config_id])
           response = {id: @config.id,
@@ -101,6 +102,7 @@ namespace '/api' do
 
       patch do
         content_type :json
+        error 401 unless apivalid?(params[:key], perm: :write)
         json_data = JSON.parse(request.body.read)
         begin
           @config = Configuration.find(params[:config_id])
@@ -168,6 +170,7 @@ namespace '/api' do
 
       get do
         content_type :json
+        error 401 unless apivalid?(params[:key])
         begin
           @cg = ConfigurationGroup.find(params[:cg_id])
           response = {id: @cg.id,
@@ -184,6 +187,7 @@ namespace '/api' do
 
       patch do
         content_type :json
+        error 401 unless apivalid?(params[:key], perm: :write)
         {'status': 'configuration group modification via the Windmill API is not supported'}.to_json
       end
 
