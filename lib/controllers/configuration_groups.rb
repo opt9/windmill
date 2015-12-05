@@ -1,6 +1,6 @@
 namespace '/configuration-groups' do
   get  do
-    @groups = ConfigurationGroup.all
+    @groups = ConfigurationGroup.order("canary_config_id, name")
     erb :"configuration_groups/index"
   end
 
@@ -130,6 +130,7 @@ namespace '/configuration-groups' do
 
       get '/:config_id/edit' do
         @config = GuaranteedConfiguration.find(params[:config_id])
+        @endpoints = @config.assigned_endpoints.order('last_config_time is NULL, last_config_time DESC').page(params[:page])
         erb :"configurations/edit"
       end
 
