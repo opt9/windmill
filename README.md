@@ -47,7 +47,7 @@ puma -C puma.rb
 
 ## Compatibility
 
-This has been tested most recently against osquery version 1.5.1-59-g43cf5f1
+This has been tested most recently against osquery version 1.6.0
 
 ## Configuring osqueryd
 
@@ -128,7 +128,7 @@ the login with Heroku option  will be visible on the login page.
 
 Populate an environment variable named `GOOGLE_ID` and a variable named
 `GOOGLE_SECRET`. If *both*  of these variables are populated with a value, then
-the login with Google option  will be visible on the login page. You will also need to authorize the callback URL `https://yourserver.yourdomain.com/auth/google/callback` for your credentials. 
+the login with Google option  will be visible on the login page. You will also need to authorize the callback URL `https://yourserver.yourdomain.com/auth/google/callback` for your credentials.
 
 Special note, logging in with Google may require an extra step to avoid protocol
 mismatch if you use a service that runs your app unencrypted but uses a service
