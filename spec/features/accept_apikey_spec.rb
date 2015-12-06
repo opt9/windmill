@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe "managing api keys", :type => :feature do
-    before :each do
-        visit '/auth/bypass'
+    before :each do |example|
+        unless example.metadata[:skip_before] 
+            visit '/auth/bypass'
+        end
     end
     
-    it "requires authentication", skip_before: true do
-        visit '/auth/logout'
+    it "requires authentication", :skip_before do
         visit '/apikeys'
-        save_and_open_page
         expect(page).to_not have_link "New"
     end
     
