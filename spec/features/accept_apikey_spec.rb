@@ -5,6 +5,13 @@ describe "managing api keys", :type => :feature do
         visit '/auth/bypass'
     end
     
+    it "requires authentication", skip_before: true do
+        visit '/auth/logout'
+        visit '/apikeys'
+        save_and_open_page
+        expect(page).to_not have_link "New"
+    end
+    
     it "lets me make keys" do
         precount = APIKey.count
         visit '/apikeys'
