@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'highline/import'
+
+require_relative '../server'
+require 'squeel'
+
+
+interactive = false
+max_age = 86400
+
+OptionParser.new do |opts|
+    opts.banner = "Usage: endpoint-cleanup [options]"
+
+    opts.on("-i", "--interactive", "Prompt for confirmation before removing endpoints.") do
+        interactive = true
+    end
+
+    opts.on("-m", "--max-age [SECONDS]", "Remove endpoints that last checked in more than this many seconds ago.") do |seconds|
+        max_age = seconds.to_i
+    end
+end.parse!
+
+puts "#{interactive ? 'interactively ' : ''}cleaning nodes older than #{max_age} seconds..."
+
+@stale = Endpoint.where{last_config_time < max_age.seconds.ago}
+num = @stale.length
+
+puts "found #{num} stale endpoints"
+
+if interactive
+    STDOUT.flush
+    STDOUT.sync = true
+
+    done = false
+    while not done do
+        puts
+        choose do |menu|
+            menu.prompt = "Do you want to delete #{num} endpoints?"
+            menu.choice :yes do
+                done = true
+            end
+            menu.choice :no do
+                exit
+            end
+            menu.choice "list endpoints" do 
+                begin
+                    IO.popen("less -F", "w") do |less|
+                        @stale.sort.each do |endpoint|
+                            less.puts(endpoint.identifier)
+                        end
+                    end
+                rescue Errno::EPIPE
+                end
+            end
+        end
+    end
+end
+
+
+puts "deleting #{num} stale endpoints"
+
+@stale.each do |e|
+    e.destroy
+end
