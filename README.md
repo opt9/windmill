@@ -217,3 +217,27 @@ adding a file `views/additiona_css.erb` and `views/additonal_js.erb`. These are
 embedded ruby file which are rendered in the main layout. The stylesheet partial
 is rendered in the head of the html and the javascript is rendered after the
 closing body tag.
+
+## Command-line utilities
+Windmill comes with two command-line utilities: `console` and `endpoint-cleanup`.
+
+### console
+The `console` utility gives you a simple IRB shell that you can use to examine and manipulate the Windmill database.  Take care here, because nothing will prevent you from deploying an osquery configuration without a proper canary test!
+
+Run the `console` utility like this:
+
+```
+heroku run bundle exec bin/console
+```
+
+### endpoint-cleanup
+The `endpoint-cleanup` utility deletes endpoints that have not polled for their configuration recently.  This can be useful if hosts in your infrastructure frequently come and go.  It is not strictly necessary to delete old endpoints, but doing so can make the Windmill UI easier to manage.
+
+Run the `endpoint-cleanup` utility like this:
+```
+heroku run bundle exec bin/endpoint-cleanup --help
+```
+
+With no arguments, this utility will **automatically** purge all endpoints that have not checked in within the past day, without confirmation.  The `-i` option prompts you for confirmation and allows you to view a list of endpoints that will be deleted.
+
+If desired, this utility is designed to be run in non-interactive mode using Heroku Scheduler or a similar scheduling add-on.
