@@ -93,7 +93,7 @@ class ConfigurationGroup < ActiveRecord::Base
     remaining = self.endpoints.where.not(assigned_config: config).shuffle
 
     # now get the front of the whole list and assign configurations
-    remaining[0..number_todo].each do |e|
+    remaining[0,number_todo].each do |e|
       e.assigned_config = config
       e.save
     end
