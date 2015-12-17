@@ -96,7 +96,8 @@ class MissingEndpoint
     false
   end
 
-  def get_config(filename="default")
+  def get_config(params = {})
+    logdebug "Returning node_invalid to unknown endpoint"
     {"node_invalid": true}.to_json
   end
 
