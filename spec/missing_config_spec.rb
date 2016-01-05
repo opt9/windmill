@@ -7,4 +7,7 @@ describe "osquery missing configuration object" do
 
   subject {@config}
   it { should respond_to :id }
+  it "should have a name" do
+    expect(@config.name).to eq("Missing Configuration")
+  end
 end
