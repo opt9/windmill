@@ -16,6 +16,8 @@ gem 'encrypted_cookie'
 gem 'time_difference'
 gem 'will_paginate'
 gem 'dotenv'
+gem 'highline'
+gem 'squeel'
 gem 'logstash-logger'
 
 group :test, :development do

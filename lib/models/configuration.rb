@@ -51,6 +51,10 @@ class MissingConfiguration
     puts "fixme"
   end
 
+  def name
+    "Missing Configuration"
+  end
+
 end
 
 class GuaranteedConfiguration
