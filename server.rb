@@ -22,6 +22,7 @@ require_relative 'lib/controllers/auth'
 require_relative 'lib/controllers/configuration_groups'
 require_relative 'lib/controllers/api'
 require_relative 'lib/controllers/apikeys'
+require_relative 'lib/controllers/logger'
 
 disable :show_exceptions
 
@@ -62,6 +63,7 @@ before do
   pass if request.path_info =~ /^\/auth\//
   pass if request.path_info =~ /^\/api\//
   pass if request.path_info =~ /^\/status/
+  pass if request.path_info =~/^\/logger/
   redirect to('/auth/login') unless current_user
 end
 

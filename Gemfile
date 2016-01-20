@@ -16,6 +16,7 @@ gem 'encrypted_cookie'
 gem 'time_difference'
 gem 'will_paginate'
 gem 'dotenv'
+gem 'logstash-logger'
 
 group :test, :development do
   gem 'sqlite3'
