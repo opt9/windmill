@@ -20,7 +20,7 @@ raise "No logging output defined." if logger.nil?
 
 namespace '/logger' do
   post do
-
+    puts "Inbound log!"
     # Add Check that Endpoint is Valid
 
     begin
