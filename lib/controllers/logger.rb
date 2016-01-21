@@ -1,6 +1,6 @@
 require 'logstash-logger'
 
-logger_type = ENV['LOGGER_TYPE'] || 'none'
+logger_type = ENV['LOGGER_TYPE'] || nil
 logger_path = ENV['LOGGER_PATH'] || nil
 logger_port = ENV['LOGGER_PORT'] || nil
 
@@ -9,7 +9,7 @@ if logger_type == 'file' and logger_path
 elsif logger_type == 'tcp' and logger_host
   logger = LogStashLogger.new(type: :tcp, host: 'localhost', port: logger_port)
 else
-  logger = nil
+  logger = LogStashLogger.new(type: :stdout)
 end
 
 raise "No logging output defined." if logger.nil?
@@ -21,8 +21,7 @@ raise "No logging output defined." if logger.nil?
 namespace '/logger' do
   post do
 
-    # If logger is never called no logger shouldn't matter...
-    raise "No logging output defined." if logger.nil?
+    # Add Check that Endpoint is Valid
 
     begin
       log = JSON.parse(request.body.read)
