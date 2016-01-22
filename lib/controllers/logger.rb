@@ -28,5 +28,7 @@ namespace '/logger' do
     rescue
     end
     logger.info "#{log}"
+
+    {"node_invalid": false}.to_json
   end
 end
