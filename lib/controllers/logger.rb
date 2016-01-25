@@ -16,17 +16,19 @@ raise "No logging output defined." if logger.nil?
 
 # Eventually it needs to ensure that endpoints are enrolled (pulled from api.rb:/config)
 # logdebug "value in node_key is #{params['node_key']}"
-# client = GuaranteedEndpoint.find_by node_key: params['node_key']
+#
 
 namespace '/logger' do
   post do
-    puts "Inbound log!"
     # Add Check that Endpoint is Valid
+
+    return nil unless GuaranteedEndpoint.find_by node_key: params['node_key']
 
     begin
       log = JSON.parse(request.body.read)
     rescue
     end
+
     logger.info "#{log}"
 
     {"node_invalid": false}.to_json
