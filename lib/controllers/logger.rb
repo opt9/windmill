@@ -24,6 +24,10 @@ namespace '/logger' do
 
     return nil unless GuaranteedEndpoint.find_by node_key: params['node_key']
 
+    # GET endpoint name or reference
+    # Split logs individually
+    # Log each individual log
+
     begin
       log = JSON.parse(request.body.read)
     rescue
