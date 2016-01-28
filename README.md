@@ -241,3 +241,4 @@ heroku run bundle exec bin/endpoint-cleanup --help
 With no arguments, this utility will **automatically** purge all endpoints that have not checked in within the past day, without confirmation.  The `-i` option prompts you for confirmation and allows you to view a list of endpoints that will be deleted.
 
 If desired, this utility is designed to be run in non-interactive mode using Heroku Scheduler or a similar scheduling add-on.
+
