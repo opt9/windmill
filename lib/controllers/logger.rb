@@ -2,12 +2,13 @@ require 'logstash-logger'
 
 logger_type = ENV['LOGGER_TYPE'] || nil
 logger_path = ENV['LOGGER_PATH'] || nil
+logger_port = ENV['LOGGER_HOST'] || nil
 logger_port = ENV['LOGGER_PORT'] || nil
 
 if logger_type == 'file' and logger_path
   logger = LogStashLogger.new(type: :file, path: 'test.log', sync: true)
 elsif logger_type == 'tcp' and logger_host
-  logger = LogStashLogger.new(type: :tcp, host: 'localhost', port: logger_port)
+  logger = LogStashLogger.new(type: :tcp, host: logger_host, port: logger_port)
 else
   logger = LogStashLogger.new(type: :stdout)
 end
