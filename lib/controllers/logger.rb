@@ -14,23 +14,19 @@ end
 
 raise "No logging output defined." if logger.nil?
 
-# Eventually it needs to ensure that endpoints are enrolled (pulled from api.rb:/config)
-# logdebug "value in node_key is #{params['node_key']}"
-#
-
 namespace '/logger' do
   post do
     # Add Check that Endpoint is Valid
 
     return nil unless GuaranteedEndpoint.find_by node_key: params['node_key']
 
-    # GET endpoint name or reference
-    # Split logs individually
-    # Log each individual log
-
     begin
-      log = JSON.parse(request.body.read)
+      logs = JSON.parse(request.body.read)
     rescue
+    end
+
+    for log in logs
+      puts log
     end
 
     logger.info "#{log}"
