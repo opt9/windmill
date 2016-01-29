@@ -4,6 +4,7 @@ logger_type = ENV['LOGGER_TYPE'] || nil
 logger_path = ENV['LOGGER_PATH'] || nil
 logger_port = ENV['LOGGER_HOST'] || nil
 logger_port = ENV['LOGGER_PORT'] || nil
+logger_name = ENV['LOGGER_NAME'] || 'windmill-logger'
 
 if logger_type == 'file' and logger_path
   logger = LogStashLogger.new(type: :file, path: 'test.log', sync: true)
@@ -30,7 +31,7 @@ namespace '/logger' do
       puts log
     end
 
-    logger.info "windmill: #{log}"
+    logger.info "#{logger_name}: #{log}"
 
     {"node_invalid": false}.to_json
   end
