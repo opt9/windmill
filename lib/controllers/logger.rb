@@ -30,7 +30,7 @@ namespace '/logger' do
       puts log
     end
 
-    logger.info "#{log}"
+    logger.info "windmill: #{log}"
 
     {"node_invalid": false}.to_json
   end
