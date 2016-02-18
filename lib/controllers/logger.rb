@@ -9,7 +9,7 @@ logger_name = ENV['LOGGER_NAME'] || 'windmill-logger'
 if logger_type == 'file' and logger_path
   logger = LogStashLogger.new(type: :file, path: 'test.log', sync: true)
 elsif logger_type == 'tcp' and logger_host
-  logger = LogStashLogger.new(type: :tcp, host: logger_host, port: logger_port)
+  logger = LogStashLogger.new(type: :tcp, host: logger_host, port: logger_port, ssl_enable: true)
 else
   logger = LogStashLogger.new(type: :stdout)
 end
