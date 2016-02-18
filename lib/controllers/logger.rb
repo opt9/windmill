@@ -2,7 +2,7 @@ require 'logstash-logger'
 
 logger_type = ENV['LOGGER_TYPE'] || nil
 logger_path = ENV['LOGGER_PATH'] || nil
-logger_port = ENV['LOGGER_HOST'] || nil
+logger_host = ENV['LOGGER_HOST'] || nil
 logger_port = ENV['LOGGER_PORT'] || nil
 logger_name = ENV['LOGGER_NAME'] || 'windmill-logger'
 
