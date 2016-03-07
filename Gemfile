@@ -18,6 +18,7 @@ gem 'will_paginate'
 gem 'dotenv'
 gem 'highline'
 gem 'squeel'
+gem 'rack-ssl'
 
 group :test, :development do
   gem 'sqlite3'
