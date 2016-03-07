@@ -13,6 +13,7 @@ require 'encrypted_cookie'
 require 'time_difference'
 require 'will_paginate'
 require 'will_paginate/active_record'
+require 'rack/ssl'
 require_relative 'lib/models/endpoint'
 require_relative 'lib/models/configuration'
 require_relative 'lib/models/configuration_group'
@@ -23,6 +24,10 @@ require_relative 'lib/controllers/configuration_groups'
 require_relative 'lib/controllers/api'
 require_relative 'lib/controllers/apikeys'
 require_relative 'lib/controllers/logger'
+
+if ENV['RACK_ENV'] == 'production'
+  use Rack::SSL
+end
 
 disable :show_exceptions
 

@@ -19,6 +19,7 @@ gem 'dotenv'
 gem 'highline'
 gem 'squeel'
 gem 'logstash-logger'
+gem 'rack-ssl'
 
 group :test, :development do
   gem 'sqlite3'
