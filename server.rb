@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/namespace'
 require 'sinatra/flash'
+require 'rack/utils'
 require 'json'
 require 'omniauth'
 require 'omniauth-github'
