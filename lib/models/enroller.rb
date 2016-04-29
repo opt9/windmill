@@ -6,7 +6,7 @@ class Enroller
     logdebug "extrapolated group_label " + group_label.to_s
     logdebug "extrapolated identifier " + identifier.to_s
 
-    if enroll_secret != NODE_ENROLL_SECRET
+    if !Rack::Utils.secure_compare(enroll_secret, NODE_ENROLL_SECRET)
       logdebug "invalid enroll_secret. Returning MissingEndpoint"
       MissingEndpoint.new
     else
