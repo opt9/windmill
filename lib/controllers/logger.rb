@@ -20,7 +20,7 @@ namespace '/logger' do
   post do
     # Add Check that Endpoint is Valid
 
-    return nil unless GuaranteedEndpoint.find_by node_key: params['node_key']
+    return nil unless Endpoint.find_by node_key: params['node_key']
 
     begin
       logs = JSON.parse(request.body.read)
