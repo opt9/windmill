@@ -19,5 +19,6 @@
       "description": "A secret used to encode cookies",
       "generator": "secret"
     }
-  }
+  },
+  "addons": ["heroku-postgresql:standard-0"]
 }
