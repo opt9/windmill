@@ -8,6 +8,10 @@ configure :development do
   set :show_exceptions, true
 end
 
+configure :staging do
+  ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
+end
+
 configure :production do
   ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
 end
