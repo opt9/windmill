@@ -1,7 +1,7 @@
 {
   "name": "Windmill",
   "description": "A TLS server for delivering config files to osquery endpoints",
-  "repository": "https://github.com/blackfist/windmill",
+  "repository": "https://github.com/heroku/windmill",
   "keywords": ["osquery", "tls", "sinatra", "ruby"],
   "env": {
     "AUTHORIZEDUSERS": {
