@@ -1,4 +1,4 @@
-# osquery-tls-server
+# Windmill
 
 ## Why do you want this
 
