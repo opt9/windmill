@@ -17,5 +17,10 @@
       "generator": "secret"
     }
   },
-  "addons": ["heroku-postgresql:standard-0"]
+  "addons": ["heroku-postgresql:standard-0"],
+  "environments": {
+    "test": {
+      "addons": ["heroku-postgresql:in-dyno"]
+    }
+  }
 }
